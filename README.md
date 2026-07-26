@@ -1,4 +1,4 @@
-# Gestec
+# GesTec
 
 Sistema de Gestión de Recursos Tecnológicos para Instituciones Educativas.
 
