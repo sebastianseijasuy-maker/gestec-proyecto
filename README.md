@@ -1,2 +1,15 @@
-# gestec-proyecto
-Sistema para la administración e inventario de recursos tecnológicos, préstamos, mantenimiento y generación de reportes en instituciones educativas.
+# Gestec
+
+Sistema de Gestión de Recursos Tecnológicos para Instituciones Educativas.
+
+## Integrantes
+- Sebastián Seijas
+- Nombre del compañero
+
+## Tecnologías
+- Java
+- NetBeans
+- MySQL
+
+## Descripción
+Sistema destinado a gestionar el inventario de recursos tecnológicos, préstamos, mantenimientos y reportes de una institución educativa.
