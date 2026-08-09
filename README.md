@@ -3,8 +3,8 @@
 Sistema de Gestión de Recursos Tecnológicos para Instituciones Educativas.
 
 ## Integrantes
+- Agustín Morales
 - Sebastián Seijas
-- Nombre del compañero
 
 ## Tecnologías
 - Java
