@@ -1,4 +1,4 @@
-package uy.edu.gestec.gestec;
+package uy.edu.gestec.presentacion;
 
 import java.sql.Connection;
 import java.sql.SQLException;
