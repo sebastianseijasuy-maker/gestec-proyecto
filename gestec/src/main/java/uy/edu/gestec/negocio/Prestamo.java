@@ -5,6 +5,7 @@
 package uy.edu.gestec.negocio;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Representa un préstamo de un recurso tecnológico.
@@ -22,7 +23,7 @@ public class Prestamo {
 
     private Usuario usuario;
     private PersonaHabilitada persona;
-    private RecursoTecnologico recurso;
+    private List<RecursoTecnologico> recursos;
 
     public Prestamo(LocalDateTime fechaEntrega,
             LocalDateTime fechaPrevDev,
@@ -30,17 +31,25 @@ public class Prestamo {
             String estadoPrestamo,
             Usuario usuario,
             PersonaHabilitada persona,
-            RecursoTecnologico recurso) {
+            List<RecursoTecnologico> recursos) {
 
-        
-            this.fechaEntrega = fechaEntrega;
-            this.fechaPrevDev = fechaPrevDev;
-            this.estadoPrestamo = estadoPrestamo;
-            this.usuario = usuario;
-            this.persona = persona;
-            this.recurso = recurso;
-        
+        this.fechaEntrega = fechaEntrega;
+        this.fechaPrevDev = fechaPrevDev;
+        this.estadoPrestamo = estadoPrestamo;
+        this.usuario = usuario;
+        this.persona = persona;
+        this.recursos = recursos;
+    }
 
+    public Prestamo(LocalDateTime fechaPrevDev,
+            Usuario usuario,
+            PersonaHabilitada persona,
+            List<RecursoTecnologico> recursos) {
+
+        this.fechaPrevDev = fechaPrevDev;
+        this.usuario = usuario;
+        this.persona = persona;
+        this.recursos = recursos;
     }
 
     public void setIdPrestamo(int idPrestamo) {
@@ -71,8 +80,8 @@ public class Prestamo {
         this.persona = persona;
     }
 
-    public void setRecurso(RecursoTecnologico recurso) {
-        this.recurso = recurso;
+    public void setRecursos(List<RecursoTecnologico> recursos) {
+        this.recursos = recursos;
     }
 
     public int getIdPrestamo() {
@@ -103,18 +112,13 @@ public class Prestamo {
         return persona;
     }
 
-    public RecursoTecnologico getRecurso() {
-        return recurso;
+    public List<RecursoTecnologico> getRecursos() {
+        return recursos;
     }
 
     // verifica si el prestamo esta vencido
-    public boolean verificarVencimiento(){
+    public boolean verificarVencimiento() {
         return LocalDateTime.now().isAfter(fechaPrevDev);
     }
-    
-    
-    
-    
-    
-    
+
 }
