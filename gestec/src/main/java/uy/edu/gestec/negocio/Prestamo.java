@@ -107,4 +107,14 @@ public class Prestamo {
         return recurso;
     }
 
+    // verifica si el prestamo esta vencido
+    public boolean verificarVencimiento(){
+        return LocalDateTime.now().isAfter(fechaPrevDev);
+    }
+    
+    
+    
+    
+    
+    
 }

@@ -52,4 +52,10 @@ public class PersonaHabilitada extends Persona {
     public boolean getBajaLogica(){
         return bajaLogica;
     }
+    
+    // Verifica si la persona se encuentra habilitada
+    public boolean consultarHabilitacion(){
+        return !bajaLogica;
+    }
+    
 }
