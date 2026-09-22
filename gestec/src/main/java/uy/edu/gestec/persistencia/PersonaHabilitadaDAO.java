@@ -12,6 +12,7 @@ import uy.edu.gestec.negocio.PersonaHabilitada;
 
 /**
  *
+ * 
  * @author sseba
  */
 public class PersonaHabilitadaDAO {

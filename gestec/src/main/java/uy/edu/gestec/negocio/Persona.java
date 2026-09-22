@@ -24,7 +24,7 @@ public class Persona {
 
         
 
-            this.idPersona = idPersona;
+            idPersona = idPersona;
             this.documento = documento;
             this.nombre = nombre;
             this.apellido = apellido;

@@ -18,7 +18,7 @@ public class RecursoTecnologico {
     private boolean disponibilidad;
     private boolean bajaLogica;
     
-    
+    //constructor cuando el recurso ya viene de la BD
     public RecursoTecnologico(int idRecurso,
             String codigoInv,
             String nombre,
@@ -35,6 +35,22 @@ public class RecursoTecnologico {
         this.disponibilidad=disponibilidad;
         this.bajaLogica=bajaLogica;
     }
+    
+    //constructor para cuando damos de alta un nuevo recurso
+    public RecursoTecnologico(String codigoInv,
+            String nombre,
+            String categoria,
+            String condicion,
+            boolean disponibilidad) {
+        
+        this.codigoInv=codigoInv;
+        this.nombre=nombre;
+        this.categoria=categoria;
+        this.condicion=condicion;
+        this.disponibilidad=disponibilidad;
+        this.bajaLogica=false;
+    }
+    
     
     public void setIdRecurso (int idRecurso){
         this.idRecurso=idRecurso;                

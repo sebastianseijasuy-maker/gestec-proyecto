@@ -22,3 +22,15 @@ VALUES
 	('001', 'notebook electra', 'notebook', 'operativo', 1, 0),
     ('002', 'mouse hp', 'perifericos', 'operativo', 1, 0),
     ('003', 'hdmi 3m', 'accesorios', 'operativo', 1, 0);
+    
+    
+INSERT INTO recurso_tecnologico
+(codigo_inv, nombre, categoria, condicion, disponibilidad, baja_logica)
+VALUES
+('004', 'notebook electra', 'notebook', 'Operativo', TRUE, FALSE),
+('005', 'notebook electra', 'notebook', 'Operativo', TRUE, FALSE),
+('006', 'notebook sirio', 'notebook', 'Operativo', TRUE, FALSE), 
+('007', 'notebook sirio', 'notebook', 'Operativo', TRUE, FALSE),
+('008', 'mouse Logitech', 'perifericos', 'Operativo', TRUE, FALSE);
+
+
