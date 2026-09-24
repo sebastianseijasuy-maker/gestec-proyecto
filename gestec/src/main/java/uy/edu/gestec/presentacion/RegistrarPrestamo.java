@@ -431,6 +431,16 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
     return;
 }
         
+        if (recursoSeleccionado == null) {
+    JOptionPane.showMessageDialog(
+            this,
+            "Debe seleccionar al menos un recurso.",
+            "Dato requerido",
+            JOptionPane.WARNING_MESSAGE
+    );
+    return;
+}
+        
 String fechaTexto = jTextField5.getText().trim();
 
 
