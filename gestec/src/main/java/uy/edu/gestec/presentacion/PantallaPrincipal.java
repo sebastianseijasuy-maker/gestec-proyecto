@@ -15,6 +15,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
      */
     public PantallaPrincipal() {
         initComponents();
+            setResizable(false);
+
+            setLocationRelativeTo(null);
+
     }
 
     /**
@@ -36,10 +40,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         setBackground(new java.awt.Color(204, 204, 255));
         setForeground(new java.awt.Color(204, 255, 255));
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel1.setBackground(new java.awt.Color(245, 247, 250));
 
-        jButton2.setBackground(new java.awt.Color(102, 102, 255));
+        jButton2.setBackground(new java.awt.Color(15, 126, 190));
         jButton2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Gestionar recursos");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -49,8 +54,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/logo_gestec_chico.png"))); // NOI18N
 
-        jButton3.setBackground(new java.awt.Color(102, 102, 255));
+        jButton3.setBackground(new java.awt.Color(15, 126, 190));
         jButton3.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("Registrar pretamo");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
