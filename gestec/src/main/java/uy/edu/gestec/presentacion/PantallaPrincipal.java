@@ -109,13 +109,16 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        GestionarRecurso ventana = new GestionarRecurso();
+        ventana.setVisible(true);
+        
+
+// TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
             RegistrarPrestamo ventana = new RegistrarPrestamo();
                 ventana.setVisible(true);
-                this.setVisible(false);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

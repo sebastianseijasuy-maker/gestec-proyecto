@@ -25,8 +25,7 @@ public class RecursoTecnologicoDAO {
         String sql = "Select id_recurso, codigo_Inv, nombre, "
                 + "categoria, condicion, disponibilidad, baja_logica "
                 + "FROM recurso_tecnologico "
-                + "WHERE nombre LIKE ?";
-
+                + "WHERE nombre LIKE ? AND baja_logica = false";
         try (Connection conexion = ConexionBD.conectar(); PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setString(1, "%" + nombre + "%");
