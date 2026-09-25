@@ -20,6 +20,7 @@ import uy.edu.gestec.negocio.PersonaHabilitada;
 import uy.edu.gestec.negocio.Usuario;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
+import uy.edu.gestec.negocio.GestionPrestamo;
 
 /**
  *
@@ -510,9 +511,9 @@ if (fechaPrevista.toLocalDate().isBefore(LocalDate.now())) {
                 recursos
         );
 
-        PrestamoDAO prestamoDao = new PrestamoDAO();
+GestionPrestamo gestionPrestamo = new GestionPrestamo();
 
-        boolean prestamo1 = prestamoDao.registrar(prestamo);
+boolean prestamo1 = gestionPrestamo.registrarPrestamo(prestamo);
 
         if (prestamo1) {
             JOptionPane.showMessageDialog(
