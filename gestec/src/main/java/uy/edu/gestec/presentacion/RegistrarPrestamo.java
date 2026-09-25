@@ -153,10 +153,15 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
         jLabel9.setText("Buscar recurso");
 
         jTextField5.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField5.setForeground(new java.awt.Color(204, 204, 204));
+        jTextField5.setForeground(new java.awt.Color(51, 51, 51));
         jTextField5.setText("DD/MM/AAAA");
         jTextField5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(150, 160, 170)));
         jTextField5.setDisabledTextColor(new java.awt.Color(102, 102, 102));
+        jTextField5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField5ActionPerformed(evt);
+            }
+        });
 
         jLabel10.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(45, 55, 65));
@@ -222,7 +227,7 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
                                         .addGap(135, 135, 135))
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(91, 91, 91)))
+                                        .addGap(85, 85, 85)))
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jLabel6)
@@ -565,6 +570,10 @@ if (fechaPrevista.toLocalDate().isBefore(LocalDate.now())) {
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
+
+    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField5ActionPerformed
 
     /**
      * @param args the command line arguments
