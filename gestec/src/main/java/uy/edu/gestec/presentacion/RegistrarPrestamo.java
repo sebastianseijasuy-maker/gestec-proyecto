@@ -389,7 +389,7 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
         }
 
         RecursoTecnologicoDAO recursoDAO = new RecursoTecnologicoDAO();
-        List<RecursoTecnologico> recursos = recursoDAO.buscarPorNombre(jTextField3.getText());
+        List<RecursoTecnologico> recursos = recursoDAO.buscarDisponiblesPorNombre(jTextField3.getText());
 
         if (!recursos.isEmpty()) {
             String[] opciones = new String[recursos.size()];
@@ -400,7 +400,7 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
                     this,
                     "Seleccione el recurso:",
                     "Recursos encontrados",
-                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.QUESTION_MESSAGE, 
                     null,
                     opciones,
                     opciones[0]

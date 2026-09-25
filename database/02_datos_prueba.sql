@@ -7,6 +7,21 @@ VALUES
 	('34345677', 'Ana', 'Martinez', '098789564'),
     ('52643245', 'Carlos', 'Perez','');
     
+select * from persona;
+    
+update persona
+set documento = '43373355'
+where id_persona = 1;
+
+update persona
+set documento = '11111111'
+where id_persona = 3;
+
+update persona
+set documento = '22222222'
+where id_persona = 4;
+   
+    
 INSERT INTO usuario (id_persona, nombre_usuario, password_hash)
 VALUES
 	(1, 'sseba', 'clave de prueba'),

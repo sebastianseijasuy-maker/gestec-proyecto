@@ -22,6 +22,7 @@ public class RecursoTecnologicoDAO {
     public List<RecursoTecnologico> buscarPorNombre(String nombre) {
         List<RecursoTecnologico> recursos = new ArrayList<>();
 
+
         String sql = "Select id_recurso, codigo_Inv, nombre, "
                 + "categoria, condicion, disponibilidad, baja_logica "
                 + "FROM recurso_tecnologico "
@@ -56,6 +57,47 @@ public class RecursoTecnologicoDAO {
         return recursos;
     }
 
+    public List<RecursoTecnologico> buscarDisponiblesPorNombre(String nombre) {
+
+    List<RecursoTecnologico> recursos = new ArrayList<>();
+
+    String sql = "SELECT id_recurso, codigo_inv, nombre, "
+            + "categoria, condicion, disponibilidad, baja_logica "
+            + "FROM recurso_tecnologico "
+            + "WHERE nombre LIKE ? "
+            + "AND disponibilidad = true "
+            + "AND baja_logica = false";
+
+    try (Connection conexion = ConexionBD.conectar();
+         PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+        ps.setString(1, "%" + nombre + "%");
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+
+            RecursoTecnologico recurso = new RecursoTecnologico(
+                    rs.getInt("id_recurso"),
+                    rs.getString("codigo_inv"),
+                    rs.getString("nombre"),
+                    rs.getString("categoria"),
+                    rs.getString("condicion"),
+                    rs.getBoolean("disponibilidad"),
+                    rs.getBoolean("baja_logica")
+            );
+
+            recursos.add(recurso);
+        }
+
+    } catch (SQLException e) {
+        System.out.println("Error al buscar recursos disponibles: "
+                + e.getMessage());
+    }
+
+    return recursos;
+}
+    
     public boolean agregarRecurso(RecursoTecnologico recurso) {
         String sql = "INSERT INTO recurso_tecnologico "
                 + "(codigo_inv, nombre, categoria, condicion, disponibilidad, baja_logica )"
