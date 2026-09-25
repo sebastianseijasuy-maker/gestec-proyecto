@@ -210,7 +210,7 @@ public class GestionarRecurso extends javax.swing.JFrame {
         jLabel3.setText("Digite solo números");
 
         jComboBox3.setBackground(new java.awt.Color(255, 255, 255));
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Periféricos", "Accesorios", "Notebook", "Robótica" }));
+        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Periféricos", "accesorios", "notebook", "Robótica" }));
         jComboBox3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(150, 160, 170)));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -297,7 +297,6 @@ public class GestionarRecurso extends javax.swing.JFrame {
                     .addComponent(jLabel10)
                     .addComponent(jLabel12)
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(47, 47, 47)
@@ -317,7 +316,7 @@ public class GestionarRecurso extends javax.swing.JFrame {
                     .addComponent(jButton6)
                     .addComponent(jButton3)
                     .addComponent(jButton4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
                 .addComponent(jButton5)
                 .addGap(31, 31, 31))
         );
