@@ -42,6 +42,29 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
 
     }
 
+    private void limpiarFormulario() {
+
+        // Persona
+        jTextField1.setText("");
+        jTextField2.setText("");
+        personaSeleccionada = null;
+
+        // Recurso
+        jTextField3.setText("");
+        jTextField4.setText("");
+        recursoSeleccionado = null;
+
+        // Lista de recursos
+        recursosSeleccionados.clear();
+        jList1.setModel(new DefaultListModel<>());
+
+        // Fecha
+        jTextField5.setText("DD/MM/AAAA");
+
+        // Volver el cursor al documento
+        jTextField1.requestFocus();
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -401,7 +424,7 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
                     this,
                     "Seleccione el recurso:",
                     "Recursos encontrados",
-                    JOptionPane.QUESTION_MESSAGE, 
+                    JOptionPane.QUESTION_MESSAGE,
                     null,
                     opciones,
                     opciones[0]
@@ -421,71 +444,69 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "No se encontró el recurso");
         }
 
-        
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
-        
         if (personaSeleccionada == null) {
-    JOptionPane.showMessageDialog(
-            this,
-            "Debe seleccionar una persona habilitada.",
-            "Dato requerido",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
-        
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debe seleccionar una persona habilitada.",
+                    "Dato requerido",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
         if (recursoSeleccionado == null) {
-    JOptionPane.showMessageDialog(
-            this,
-            "Debe seleccionar al menos un recurso.",
-            "Dato requerido",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
-        
-String fechaTexto = jTextField5.getText().trim();
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debe seleccionar al menos un recurso.",
+                    "Dato requerido",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
 
+        String fechaTexto = jTextField5.getText().trim();
 
-if (fechaTexto.isEmpty() || fechaTexto.equals("DD/MM/AAAA")) {
-    JOptionPane.showMessageDialog(
-            this,
-            "Debe ingresar la fecha prevista de devolución.",
-            "Dato requerido",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
+        if (fechaTexto.isEmpty() || fechaTexto.equals("DD/MM/AAAA")) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debe ingresar la fecha prevista de devolución.",
+                    "Dato requerido",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
 
-LocalDateTime fechaPrevista;
+        LocalDateTime fechaPrevista;
 
-try {
-    fechaPrevista = LocalDate.parse(
-            fechaTexto,
-            DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    ).atStartOfDay();
+        try {
+            fechaPrevista = LocalDate.parse(
+                    fechaTexto,
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            ).atStartOfDay();
 
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(
-            this,
-            "Ingrese una fecha válida con formato DD/MM/AAAA.",
-            "Fecha no válida",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
-if (fechaPrevista.toLocalDate().isBefore(LocalDate.now())) {
-    JOptionPane.showMessageDialog(
-            this,
-            "La fecha prevista de devolución no puede ser anterior a la fecha actual.",
-            "Fecha no válida",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Ingrese una fecha válida con formato DD/MM/AAAA.",
+                    "Fecha no válida",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        if (fechaPrevista.toLocalDate().isBefore(LocalDate.now())) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "La fecha prevista de devolución no puede ser anterior a la fecha actual.",
+                    "Fecha no válida",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
 
         Usuario usuarioPoite = new Usuario(
                 0,
@@ -511,15 +532,18 @@ if (fechaPrevista.toLocalDate().isBefore(LocalDate.now())) {
                 recursos
         );
 
-GestionPrestamo gestionPrestamo = new GestionPrestamo();
+        GestionPrestamo gestionPrestamo = new GestionPrestamo();
 
-boolean prestamo1 = gestionPrestamo.registrarPrestamo(prestamo);
+        boolean prestamo1 = gestionPrestamo.registrarPrestamo(prestamo);
 
         if (prestamo1) {
             JOptionPane.showMessageDialog(
                     this,
                     "Préstamo registrado correctamente"
             );
+
+            limpiarFormulario();
+
         } else {
             JOptionPane.showMessageDialog(
                     this,

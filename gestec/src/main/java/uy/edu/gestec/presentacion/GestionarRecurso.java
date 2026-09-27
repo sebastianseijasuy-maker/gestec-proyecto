@@ -530,6 +530,8 @@ public class GestionarRecurso extends javax.swing.JFrame {
         RecursoTecnologicoDAO recursoDAO = new RecursoTecnologicoDAO();
         boolean recursoEliminado = recursoDAO.eliminarRecurso(recursoSeleccionado.getIdRecurso());
         JOptionPane.showMessageDialog(this, "Recurso dado de baja correctamente");
+        limpiarCampos();
+
 
 
     }//GEN-LAST:event_jButton6ActionPerformed
