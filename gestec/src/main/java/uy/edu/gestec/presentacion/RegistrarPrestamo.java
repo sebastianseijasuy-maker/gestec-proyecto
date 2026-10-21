@@ -40,6 +40,8 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
         setResizable(false);
         setTitle("GESTEC - Registrar préstamo");
 
+setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
     }
 
     private void limpiarFormulario() {

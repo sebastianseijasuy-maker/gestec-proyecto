@@ -46,6 +46,8 @@ public class GestionarRecurso extends javax.swing.JFrame {
         jComboBox2.setSelectedIndex(-1);
         jComboBox3.setSelectedIndex(-1);
 
+setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
     }
 
     /**
