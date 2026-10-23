@@ -277,5 +277,49 @@ public boolean registrarDevolucion(int idPrestamo) {
     }
 }
 
+
+public List<Object[]> listarPrestamos() {
+
+    List<Object[]> lista = new ArrayList<>();
+
+    String sql = "SELECT pr.id_prestamo, "
+            + "p.nombre, p.apellido, "
+            + "pr.fecha_entrega, pr.fecha_prev_dev, "
+            + "pr.estado_prestamo "
+            + "FROM prestamo pr "
+            + "INNER JOIN persona_habilitada ph "
+            + "ON pr.id_persona_hab = ph.id_persona_hab "
+            + "INNER JOIN persona p "
+            + "ON ph.id_persona = p.id_persona "
+            + "ORDER BY pr.id_prestamo DESC";
+
+    try (Connection conexion = ConexionBD.conectar();
+         PreparedStatement ps = conexion.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+
+        while (rs.next()) {
+
+            Object[] fila = {
+                rs.getInt("id_prestamo"),
+                rs.getString("nombre") + " "
+                    + rs.getString("apellido"),
+                rs.getTimestamp("fecha_entrega"),
+                rs.getTimestamp("fecha_prev_dev"),
+                rs.getString("estado_prestamo")
+            };
+
+            lista.add(fila);
+        }
+
+    } catch (SQLException e) {
+        System.out.println(
+            "Error al listar préstamos: " + e.getMessage()
+        );
+    }
+
+    return lista;
+}
+
+
 }
 
