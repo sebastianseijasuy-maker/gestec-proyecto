@@ -120,6 +120,7 @@ private void cargarPrestamo(int idPrestamo) {
         txtFechaEntrega = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(245, 247, 250));
 
         lblTitulo.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         lblTitulo.setForeground(new java.awt.Color(12, 55, 96));
