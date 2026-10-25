@@ -42,11 +42,14 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
 
         setTitle("GESTEC - Gestionar recursos");
 
-        jComboBox1.setSelectedIndex(-1);
-        jComboBox2.setSelectedIndex(-1);
-        jComboBox3.setSelectedIndex(-1);
-
+       
 setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+jTextField3.setText("");
+
+((javax.swing.table.DefaultTableModel)
+        jTable1.getModel()).setRowCount(0);
+
 
     }
 
@@ -219,69 +222,71 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
-        if (jTextField3.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Debe ingresar un recurso para buscar.",
-                    "Dato requerido",
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
+String busqueda = jTextField3.getText().trim();
 
-        RecursoTecnologicoDAO recursoDAO = new RecursoTecnologicoDAO();
-        List<RecursoTecnologico> recursos = recursoDAO.buscarPorNombre(jTextField3.getText());
+String filtroEstado = jComboBox4.getSelectedItem().toString();
 
-        if (!recursos.isEmpty()) {
-            String[] opciones = new String[recursos.size()];
-            for (int i = 0; i < recursos.size(); i++) {
-                opciones[i] = recursos.get(i).getNombre() + " - Cod.:" + recursos.get(i).getCodigoInv();
-            }
-            String seleccion = (String) JOptionPane.showInputDialog(
-                    this,
-                    "Seleccione el recurso:",
-                    "Recursos encontrados",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    opciones,
-                    opciones[0]
-            );
-            if (seleccion != null) {
+// Si todavía aparece el texto de ejemplo, buscar todos
+if (busqueda.equalsIgnoreCase(
+        "Ingrese número de préstamo, nombre o documento")) {
+    busqueda = "";
+}
 
-                for (int i = 0; i < opciones.length; i++) {
+// Consultar los préstamos en la base de datos
+PrestamoDAO prestamoDAO = new PrestamoDAO();
 
-                    if (opciones[i].equals(seleccion)) {
-                        recursoSeleccionado = recursos.get(i);
-                        jTextField4.setText(recursoSeleccionado.getNombre());
-                        jTextField7.setText(recursoSeleccionado.getCodigoInv());
-                        jComboBox3.setSelectedItem(recursoSeleccionado.getCategoria());
+List<Prestamo> prestamos =
+        prestamoDAO.consultarPrestamos(busqueda, filtroEstado);
 
-                        if (recursoSeleccionado.getCondicion().equalsIgnoreCase("operativo")) {
-                            jComboBox2.setSelectedIndex(0);
-                        } else {
-                            jComboBox2.setSelectedIndex(1);
-                        }
+// Obtener el modelo de la tabla
+javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel) jTable1.getModel();
 
-                        if (recursoSeleccionado.getDisponibilidad()) {
+// Eliminar los resultados anteriores
+modelo.setRowCount(0);
 
-                            jComboBox1.setSelectedItem("Disponible");
-                        } else {
-                            jComboBox1.setSelectedItem("No disponible");
-                        }
+// Formato de las fechas
+DateTimeFormatter formato =
+        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-                        break;
-                    }
-                }
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "No se encontró el recurso");
-            limpiarCampos();
-        }
+// Recorrer los préstamos encontrados
+for (Prestamo prestamo : prestamos) {
 
+    String persona =
+            prestamo.getPersona().getNombre() + " "
+            + prestamo.getPersona().getApellido();
+
+    String fechaEntrega = prestamo.getFechaEntrega() != null
+            ? prestamo.getFechaEntrega().format(formato)
+            : "-";
+
+    String fechaPrevista = prestamo.getFechaPrevDev() != null
+            ? prestamo.getFechaPrevDev().format(formato)
+            : "-";
+
+    String estado = prestamo.getEstadoPrestamo();
+
+    // Agregar una fila a la tabla
+    modelo.addRow(new Object[]{
+        prestamo.getIdPrestamo(),
+        persona,
+        fechaEntrega,
+        fechaPrevista,
+        estado
+    });
+}
+
+// Informar si no se encontraron resultados
+if (prestamos.isEmpty()) {
+    JOptionPane.showMessageDialog(
+            this,
+            "No se encontraron préstamos con esos criterios."
+    );
+}
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    }
+    
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         this.dispose();
@@ -289,63 +294,31 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 
-        if (recursoSeleccionado == null) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Primero debe buscar y seleccionar un recurso"
-            );
-            return;
-        }
 
-        if (jTextField7.getText().trim().isEmpty()
-                || jTextField4.getText().trim().isEmpty()
-                || jComboBox1.getSelectedIndex() == -1
-                || jComboBox2.getSelectedIndex() == -1
-                || jComboBox3.getSelectedIndex() == -1) {
+int fila = jTable1.getSelectedRow();
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Debe completar todos los campos."
-            );
-            return;
-        }
+if (fila == -1) {
+    JOptionPane.showMessageDialog(
+        this,
+        "Debe seleccionar un préstamo de la tabla."
+    );
+    return;
+}
 
-        String categoria
-                = jComboBox3.getSelectedItem().toString();
+// Obtener el número del préstamo seleccionado
+int filaModelo = jTable1.convertRowIndexToModel(fila);
 
-        String condicion
-                = jComboBox2.getSelectedItem().toString().toLowerCase();
+int idPrestamo = Integer.parseInt(
+    jTable1.getModel().getValueAt(filaModelo, 0).toString()
+);
 
-        boolean disponibilidad
-                = jComboBox1.getSelectedItem().equals("Disponible");
 
-        RecursoTecnologico recursoModificado = new RecursoTecnologico(
-                recursoSeleccionado.getIdRecurso(),
-                jTextField7.getText(),
-                jTextField4.getText(),
-                categoria,
-                condicion,
-                disponibilidad,
-                false
-        );
+RegistrarDevolucion ventana = new RegistrarDevolucion(idPrestamo);
 
-        RecursoTecnologicoDAO recursoDAO = new RecursoTecnologicoDAO();
+ventana.setVisible(true);
 
-        boolean modificado
-                = recursoDAO.modificarRecurso(recursoModificado);
 
-        if (modificado) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Recurso modificado correctamente"
-            );
-            limpiarCampos();
-        } else {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "No se pudo modificar el recurso"
-            );
-        }
+
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
@@ -353,18 +326,7 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     
-    private void limpiarCampos() {
-        jTextField3.setText("");
-        jTextField4.setText("");
-        jTextField7.setText("");
-
-        jComboBox3.setSelectedIndex(-1);
-        jComboBox1.setSelectedIndex(-1);
-        jComboBox2.setSelectedIndex(-1);
-
-        recursoSeleccionado = null;
-    }
-
+   
     
     /**
      * @param args the command line arguments
