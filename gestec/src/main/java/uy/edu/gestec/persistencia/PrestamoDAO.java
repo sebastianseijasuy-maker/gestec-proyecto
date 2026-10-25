@@ -278,48 +278,91 @@ public boolean registrarDevolucion(int idPrestamo) {
 }
 
 
-public List<Object[]> listarPrestamos() {
+public List<Prestamo> consultarPrestamos(String busqueda, String filtroEstado) {
 
-    List<Object[]> lista = new ArrayList<>();
+    List<Prestamo> resultados = new ArrayList<>();
 
-    String sql = "SELECT pr.id_prestamo, "
-            + "p.nombre, p.apellido, "
-            + "pr.fecha_entrega, pr.fecha_prev_dev, "
-            + "pr.estado_prestamo "
+    String sql = "SELECT pr.id_prestamo, pr.fecha_entrega, "
+            + "pr.fecha_prev_dev, pr.fecha_devolucion_real, "
+            + "pr.estado_prestamo, "
+            + "ph.id_persona_hab, ph.tipo_persona, ph.baja_logica, "
+            + "p.id_persona, p.documento, p.nombre, "
+            + "p.apellido, p.telefono "
             + "FROM prestamo pr "
             + "INNER JOIN persona_habilitada ph "
             + "ON pr.id_persona_hab = ph.id_persona_hab "
             + "INNER JOIN persona p "
             + "ON ph.id_persona = p.id_persona "
-            + "ORDER BY pr.id_prestamo DESC";
+            + "WHERE (CAST(pr.id_prestamo AS CHAR) LIKE ? "
+            + "OR p.documento LIKE ? "
+            + "OR p.nombre LIKE ? "
+            + "OR p.apellido LIKE ? "
+            + "OR CONCAT(p.nombre, ' ', p.apellido) LIKE ?) ";
+
+    if ("Pendiente".equals(filtroEstado)
+            || "Pendientes".equals(filtroEstado)) {
+        sql += "AND pr.estado_prestamo IN ('Activo', 'Vencido') "
+                + "AND pr.fecha_devolucion_real IS NULL ";
+    } else if ("Devueltos".equals(filtroEstado)) {
+        sql += "AND pr.estado_prestamo = 'Devuelto' ";
+    }
+
+    sql += "ORDER BY pr.id_prestamo DESC";
 
     try (Connection conexion = ConexionBD.conectar();
-         PreparedStatement ps = conexion.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+         PreparedStatement ps = conexion.prepareStatement(sql)) {
 
-        while (rs.next()) {
+        String patron = "%" + (busqueda == null ? "" : busqueda.trim()) + "%";
 
-            Object[] fila = {
-                rs.getInt("id_prestamo"),
-                rs.getString("nombre") + " "
-                    + rs.getString("apellido"),
-                rs.getTimestamp("fecha_entrega"),
-                rs.getTimestamp("fecha_prev_dev"),
-                rs.getString("estado_prestamo")
-            };
+        for (int i = 1; i <= 5; i++) {
+            ps.setString(i, patron);
+        }
 
-            lista.add(fila);
+        try (ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                PersonaHabilitada persona = new PersonaHabilitada(
+                        rs.getInt("id_persona_hab"),
+                        rs.getString("tipo_persona"),
+                        rs.getBoolean("baja_logica"),
+                        rs.getInt("id_persona"),
+                        rs.getString("documento"),
+                        rs.getString("nombre"),
+                        rs.getString("apellido"),
+                        rs.getString("telefono")
+                );
+
+                Prestamo prestamo = new Prestamo(
+                        rs.getTimestamp("fecha_prev_dev").toLocalDateTime(),
+                        null,
+                        persona,
+                        new ArrayList<>()
+                );
+
+                prestamo.setIdPrestamo(rs.getInt("id_prestamo"));
+                prestamo.setEstadoPrestamo(rs.getString("estado_prestamo"));
+
+                Timestamp fechaEntrega = rs.getTimestamp("fecha_entrega");
+                if (fechaEntrega != null) {
+                    prestamo.setFechaEntrega(fechaEntrega.toLocalDateTime());
+                }
+
+                Timestamp fechaReal = rs.getTimestamp("fecha_devolucion_real");
+                if (fechaReal != null) {
+                    prestamo.setFechaDevolucionReal(fechaReal.toLocalDateTime());
+                }
+
+                resultados.add(prestamo);
+            }
         }
 
     } catch (SQLException e) {
-        System.out.println(
-            "Error al listar préstamos: " + e.getMessage()
-        );
+        System.out.println("Error al consultar préstamos: " + e.getMessage());
     }
 
-    return lista;
+    return resultados;
 }
-
 
 }
 

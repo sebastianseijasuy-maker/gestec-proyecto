@@ -37,6 +37,11 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
      */
     public ConsultarPrestamos() {
         initComponents();
+        jTable1.setRowSelectionAllowed(true);
+jTable1.setColumnSelectionAllowed(false);
+jTable1.setSelectionMode(
+    javax.swing.ListSelectionModel.SINGLE_SELECTION
+);
         setResizable(false);
         setLocationRelativeTo(null);
 
@@ -44,6 +49,12 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
 
 
 setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+jTextField3.setText("");
+
+((javax.swing.table.DefaultTableModel)
+        jTable1.getModel()).setRowCount(0);
+
 
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -214,7 +225,69 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
-        
+
+String busqueda = jTextField3.getText().trim();
+
+String filtroEstado = jComboBox4.getSelectedItem().toString();
+
+// Si todavía aparece el texto de ejemplo, buscar todos
+if (busqueda.equalsIgnoreCase(
+        "Ingrese número de préstamo, nombre o documento")) {
+    busqueda = "";
+}
+
+// Consultar los préstamos en la base de datos
+PrestamoDAO prestamoDAO = new PrestamoDAO();
+
+List<Prestamo> prestamos =
+        prestamoDAO.consultarPrestamos(busqueda, filtroEstado);
+
+// Obtener el modelo de la tabla
+javax.swing.table.DefaultTableModel modelo =
+        (javax.swing.table.DefaultTableModel) jTable1.getModel();
+
+// Eliminar los resultados anteriores
+modelo.setRowCount(0);
+
+// Formato de las fechas
+DateTimeFormatter formato =
+        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+// Recorrer los préstamos encontrados
+for (Prestamo prestamo : prestamos) {
+
+    String persona =
+            prestamo.getPersona().getNombre() + " "
+            + prestamo.getPersona().getApellido();
+
+    String fechaEntrega = prestamo.getFechaEntrega() != null
+            ? prestamo.getFechaEntrega().format(formato)
+            : "-";
+
+    String fechaPrevista = prestamo.getFechaPrevDev() != null
+            ? prestamo.getFechaPrevDev().format(formato)
+            : "-";
+
+    String estado = prestamo.getEstadoPrestamo();
+
+    // Agregar una fila a la tabla
+    modelo.addRow(new Object[]{
+        prestamo.getIdPrestamo(),
+        persona,
+        fechaEntrega,
+        fechaPrevista,
+        estado
+    });
+}
+
+// Informar si no se encontraron resultados
+if (prestamos.isEmpty()) {
+    JOptionPane.showMessageDialog(
+            this,
+            "No se encontraron préstamos con esos criterios."
+    );
+}
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     
@@ -225,7 +298,31 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 
-        
+
+int fila = jTable1.getSelectedRow();
+
+if (fila == -1) {
+    JOptionPane.showMessageDialog(
+        this,
+        "Debe seleccionar un préstamo de la tabla."
+    );
+    return;
+}
+
+// Obtener el número del préstamo seleccionado
+int filaModelo = jTable1.convertRowIndexToModel(fila);
+
+int idPrestamo = Integer.parseInt(
+    jTable1.getModel().getValueAt(filaModelo, 0).toString()
+);
+
+
+RegistrarDevolucion ventana = new RegistrarDevolucion(idPrestamo);
+
+ventana.setVisible(true);
+
+
+
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
@@ -233,12 +330,6 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     
-    private void limpiarCampos() {
-
-
-        recursoSeleccionado = null;
-    }
-
     
    
 

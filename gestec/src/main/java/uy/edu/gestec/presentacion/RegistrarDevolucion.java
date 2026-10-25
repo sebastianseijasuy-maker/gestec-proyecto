@@ -29,7 +29,17 @@ private Prestamo prestamoSeleccionado;
         
 setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+
     }
+    
+public RegistrarDevolucion(int idPrestamo) {
+    this();
+
+    txtIdPrestamo.setText(String.valueOf(idPrestamo));
+
+    btnBuscarPrestamo.doClick();
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
