@@ -461,7 +461,7 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
             return;
         }
 
-        if (recursoSeleccionado == null) {
+        if (recursosSeleccionados == null || recursosSeleccionados.isEmpty())  {
             JOptionPane.showMessageDialog(
                     this,
                     "Debe seleccionar al menos un recurso.",
@@ -521,8 +521,16 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
                 ""
         );
 
-        List<RecursoTecnologico> recursos = new ArrayList<>();
-        recursos.add(recursoSeleccionado);
+        List<RecursoTecnologico> recursos =
+        new ArrayList<>(recursosSeleccionados);
+        
+System.out.println("Cantidad de recursos: " + recursos.size());
+
+for (RecursoTecnologico recurso : recursos) {
+    System.out.println(
+        recurso.getIdRecurso() + " - " + recurso.getNombre()
+    );
+}
 
         Prestamo prestamo = new Prestamo(
                 LocalDateTime.now(),

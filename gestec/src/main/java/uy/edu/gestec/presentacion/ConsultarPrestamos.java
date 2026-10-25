@@ -37,26 +37,107 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
      */
     public ConsultarPrestamos() {
         initComponents();
-        jTable1.setRowSelectionAllowed(true);
-jTable1.setColumnSelectionAllowed(false);
-jTable1.setSelectionMode(
-    javax.swing.ListSelectionModel.SINGLE_SELECTION
+        jTable1.setDefaultRenderer(
+    Object.class,
+    new javax.swing.table.DefaultTableCellRenderer() {
+
+        @Override
+        public java.awt.Component getTableCellRendererComponent(
+                javax.swing.JTable table,
+                Object value,
+                boolean isSelected,
+                boolean hasFocus,
+                int row,
+                int column) {
+
+            java.awt.Component componente =
+                    super.getTableCellRendererComponent(
+                            table, value, isSelected,
+                            hasFocus, row, column
+                    );
+
+            int filaModelo = table.convertRowIndexToModel(row);
+
+            Object fechaObj = table.getModel()
+                    .getValueAt(filaModelo, 3);
+
+            Object estadoObj = table.getModel()
+                    .getValueAt(filaModelo, 4);
+
+            String fechaTexto = fechaObj == null
+                    ? "" : fechaObj.toString();
+
+            String estado = estadoObj == null
+                    ? "" : estadoObj.toString();
+
+            boolean vencido = false;
+
+            try {
+                java.time.LocalDate fechaPrevista =
+                        java.time.LocalDateTime.parse(
+                                fechaTexto,
+                                java.time.format.DateTimeFormatter
+                                        .ofPattern("dd/MM/yyyy HH:mm")
+                        ).toLocalDate();
+
+                vencido = fechaPrevista.isBefore(
+                        java.time.LocalDate.now()
+                ) && !estado.equalsIgnoreCase("Devuelto");
+
+            } catch (Exception e) {
+                // Si no hay fecha válida, no se marca.
+            }
+
+            if (!isSelected) {
+                if (vencido) {
+                    componente.setBackground(
+                            new java.awt.Color(255, 220, 220)
+                    );
+                    componente.setForeground(
+                            new java.awt.Color(150, 0, 0)
+                    );
+                } else {
+                    componente.setBackground(java.awt.Color.WHITE);
+                    componente.setForeground(java.awt.Color.BLACK);
+                }
+            }
+
+            return componente;
+        }
+    }
 );
+        
+
+
+
+        
+        jPanel1.setFocusable(true);
+        jTextField3.setText(
+                "Ingrese número de préstamo, nombre o documento"
+        );
+        jTextField3.setForeground(new java.awt.Color(153, 153, 153));
+
+        jTable1.setRowSelectionAllowed(true);
+        jTable1.setColumnSelectionAllowed(false);
+        jTable1.setSelectionMode(
+                javax.swing.ListSelectionModel.SINGLE_SELECTION
+        );
+
         setResizable(false);
         setLocationRelativeTo(null);
 
         setTitle("GESTEC - Consultar prestamos");
 
+        setDefaultCloseOperation(
+                javax.swing.WindowConstants.DISPOSE_ON_CLOSE
+        );
 
-setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-jTextField3.setText("");
-
-((javax.swing.table.DefaultTableModel)
-        jTable1.getModel()).setRowCount(0);
-
-
+        ((javax.swing.table.DefaultTableModel) jTable1.getModel()).setRowCount(0);
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jPanel1.requestFocusInWindow();
+        });
     }
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -84,11 +165,17 @@ jTextField3.setText("");
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Captura de pantalla 2026-09-23 081438.png"))); // NOI18N
         jLabel2.setText("jLabel2");
 
-        jTextField3.setBackground(new java.awt.Color(255, 255, 255));
         jTextField3.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jTextField3.setForeground(new java.awt.Color(153, 153, 153));
-        jTextField3.setText(" Ingrese número de préstamo, nombre o documento");
         jTextField3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(150, 160, 170)));
+        jTextField3.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextField3FocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextField3FocusLost(evt);
+            }
+        });
         jTextField3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField3ActionPerformed(evt);
@@ -132,11 +219,9 @@ jTextField3.setText("");
         jLabel9.setForeground(new java.awt.Color(12, 55, 96));
         jLabel9.setText("Estado");
 
-        jComboBox4.setBackground(new java.awt.Color(255, 255, 255));
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Pendiente", "Devueltos" }));
+        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Pendientes", "Devueltos" }));
 
         jTable1.setAutoCreateRowSorter(true);
-        jTable1.setBackground(new java.awt.Color(255, 255, 255));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
@@ -159,8 +244,8 @@ jTextField3.setText("");
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(377, 377, 377)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(319, 319, 319)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton5))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -172,16 +257,20 @@ jTextField3.setText("");
                         .addGap(31, 31, 31)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 562, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addGap(115, 115, 115)
-                                .addComponent(jLabel9))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addGap(242, 242, 242)))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel9)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -225,72 +314,70 @@ jTextField3.setText("");
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
+        String busqueda = jTextField3.getText().trim();
 
-String busqueda = jTextField3.getText().trim();
-
-String filtroEstado = jComboBox4.getSelectedItem().toString();
+        String filtroEstado = jComboBox4.getSelectedItem().toString();
 
 // Si todavía aparece el texto de ejemplo, buscar todos
-if (busqueda.equalsIgnoreCase(
-        "Ingrese número de préstamo, nombre o documento")) {
-    busqueda = "";
-}
+        if (busqueda.equalsIgnoreCase(
+                "Ingrese número de préstamo, nombre o documento")) {
+            busqueda = "";
+        }
 
 // Consultar los préstamos en la base de datos
-PrestamoDAO prestamoDAO = new PrestamoDAO();
+        PrestamoDAO prestamoDAO = new PrestamoDAO();
 
-List<Prestamo> prestamos =
-        prestamoDAO.consultarPrestamos(busqueda, filtroEstado);
+        List<Prestamo> prestamos
+                = prestamoDAO.consultarPrestamos(busqueda, filtroEstado);
 
 // Obtener el modelo de la tabla
-javax.swing.table.DefaultTableModel modelo =
-        (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        javax.swing.table.DefaultTableModel modelo
+                = (javax.swing.table.DefaultTableModel) jTable1.getModel();
 
 // Eliminar los resultados anteriores
-modelo.setRowCount(0);
+        modelo.setRowCount(0);
 
 // Formato de las fechas
-DateTimeFormatter formato =
-        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formato
+                = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
 // Recorrer los préstamos encontrados
-for (Prestamo prestamo : prestamos) {
+        for (Prestamo prestamo : prestamos) {
 
-    String persona =
-            prestamo.getPersona().getNombre() + " "
-            + prestamo.getPersona().getApellido();
+            String persona
+                    = prestamo.getPersona().getNombre() + " "
+                    + prestamo.getPersona().getApellido();
 
-    String fechaEntrega = prestamo.getFechaEntrega() != null
-            ? prestamo.getFechaEntrega().format(formato)
-            : "-";
+            String fechaEntrega = prestamo.getFechaEntrega() != null
+                    ? prestamo.getFechaEntrega().format(formato)
+                    : "-";
 
-    String fechaPrevista = prestamo.getFechaPrevDev() != null
-            ? prestamo.getFechaPrevDev().format(formato)
-            : "-";
+            String fechaPrevista = prestamo.getFechaPrevDev() != null
+                    ? prestamo.getFechaPrevDev().format(formato)
+                    : "-";
 
-    String estado = prestamo.getEstadoPrestamo();
+            String estado = prestamo.getEstadoPrestamo();
 
-    // Agregar una fila a la tabla
-    modelo.addRow(new Object[]{
-        prestamo.getIdPrestamo(),
-        persona,
-        fechaEntrega,
-        fechaPrevista,
-        estado
-    });
-}
+            // Agregar una fila a la tabla
+            modelo.addRow(new Object[]{
+                prestamo.getIdPrestamo(),
+                persona,
+                fechaEntrega,
+                fechaPrevista,
+                estado
+            });
+        }
 
 // Informar si no se encontraron resultados
-if (prestamos.isEmpty()) {
-    JOptionPane.showMessageDialog(
-            this,
-            "No se encontraron préstamos con esos criterios."
-    );
-}
+        if (prestamos.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se encontraron préstamos con esos criterios."
+            );
+        }
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         this.dispose();
@@ -298,29 +385,26 @@ if (prestamos.isEmpty()) {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 
+        int fila = jTable1.getSelectedRow();
 
-int fila = jTable1.getSelectedRow();
-
-if (fila == -1) {
-    JOptionPane.showMessageDialog(
-        this,
-        "Debe seleccionar un préstamo de la tabla."
-    );
-    return;
-}
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debe seleccionar un préstamo de la tabla."
+            );
+            return;
+        }
 
 // Obtener el número del préstamo seleccionado
-int filaModelo = jTable1.convertRowIndexToModel(fila);
+        int filaModelo = jTable1.convertRowIndexToModel(fila);
 
-int idPrestamo = Integer.parseInt(
-    jTable1.getModel().getValueAt(filaModelo, 0).toString()
-);
+        int idPrestamo = Integer.parseInt(
+                jTable1.getModel().getValueAt(filaModelo, 0).toString()
+        );
 
+        RegistrarDevolucion ventana = new RegistrarDevolucion(idPrestamo);
 
-RegistrarDevolucion ventana = new RegistrarDevolucion(idPrestamo);
-
-ventana.setVisible(true);
-
+        ventana.setVisible(true);
 
 
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -329,9 +413,24 @@ ventana.setVisible(true);
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField3ActionPerformed
 
-    
-    
-   
+    private void jTextField3FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField3FocusGained
+        if (jTextField3.getText().trim().equals(
+                "Ingrese número de préstamo, nombre o documento")) {
+
+            jTextField3.setText("");
+            jTextField3.setForeground(java.awt.Color.BLACK);
+        }      // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField3FocusGained
+
+    private void jTextField3FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField3FocusLost
+        if (jTextField3.getText().trim().isEmpty()) {
+            jTextField3.setText(
+                    "Ingrese número de préstamo, nombre o documento"
+            );
+            jTextField3.setForeground(new java.awt.Color(153, 153, 153));
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField3FocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
@@ -347,7 +446,5 @@ ventana.setVisible(true);
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
-
-
 
 }

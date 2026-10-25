@@ -11,33 +11,86 @@ import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
 import java.time.format.DateTimeFormatter;
 
-
 /**
  *
  * @author jjaam
  */
 public class RegistrarDevolucion extends javax.swing.JFrame {
-    
-private Prestamo prestamoSeleccionado;
 
+    private Prestamo prestamoSeleccionado;
 
     /**
      * Crear RegistrarDevolucion
      */
     public RegistrarDevolucion() {
         initComponents();
-        
-setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
     }
+
     
 public RegistrarDevolucion(int idPrestamo) {
     this();
+    cargarPrestamo(idPrestamo);
+}
 
-    txtIdPrestamo.setText(String.valueOf(idPrestamo));
 
-    btnBuscarPrestamo.doClick();
+
+private void cargarPrestamo(int idPrestamo) {
+
+    PrestamoDAO dao = new PrestamoDAO();
+
+    prestamoSeleccionado = dao.buscarPrestamoPendientePorId(idPrestamo);
+
+    if (prestamoSeleccionado == null) {
+        JOptionPane.showMessageDialog(
+                this,
+                "No se encontró un préstamo pendiente con ese número.",
+                "Préstamo no encontrado",
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        btnConfirmarDevolucion.setEnabled(false);
+        return;
+    }
+
+    DateTimeFormatter formato =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    // Número de préstamo
+    txtIdPrestamo.setText(
+            String.valueOf(prestamoSeleccionado.getIdPrestamo())
+    );
+
+    // Persona habilitada
+    txtPersona.setText(
+            prestamoSeleccionado.getPersona().getNombre() + " "
+            + prestamoSeleccionado.getPersona().getApellido()
+    );
+
+    // Fecha de entrega
+    if (prestamoSeleccionado.getFechaEntrega() != null) {
+        txtFechaEntrega.setText(
+                prestamoSeleccionado.getFechaEntrega().format(formato)
+        );
+    }
+
+    // Fecha prevista de devolución
+    txtFechaPrevista.setText(
+            prestamoSeleccionado.getFechaPrevDev().format(formato)
+    );
+
+    // Recursos incluidos
+    DefaultListModel<String> modelo = new DefaultListModel<>();
+
+    for (RecursoTecnologico recurso : prestamoSeleccionado.getRecursos()) {
+        modelo.addElement(recurso.getNombre());
+    }
+
+    listaRecursos.setModel(modelo);
+
+    btnConfirmarDevolucion.setEnabled(true);
 }
 
 
@@ -53,44 +106,53 @@ public RegistrarDevolucion(int idPrestamo) {
         lblTitulo = new javax.swing.JLabel();
         lblIdPrestamo = new javax.swing.JLabel();
         txtIdPrestamo = new javax.swing.JTextField();
-        btnBuscarPrestamo = new javax.swing.JButton();
         lblPersona = new javax.swing.JLabel();
         txtPersona = new javax.swing.JTextField();
         lblFechaPrevista = new javax.swing.JLabel();
         txtFechaPrevista = new javax.swing.JTextField();
         btnConfirmarDevolucion = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
+        btnVolver = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         listaRecursos = new javax.swing.JList<>();
         lblRecursosPrestamo = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        lblFechaPrevista1 = new javax.swing.JLabel();
+        txtFechaEntrega = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        lblTitulo.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        lblTitulo.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        lblTitulo.setForeground(new java.awt.Color(12, 55, 96));
+        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitulo.setText("Registrar devolución");
 
+        lblIdPrestamo.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         lblIdPrestamo.setText("Número de préstamo");
 
+        txtIdPrestamo.setEditable(false);
         txtIdPrestamo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIdPrestamoActionPerformed(evt);
             }
         });
 
-        btnBuscarPrestamo.setBackground(new java.awt.Color(51, 153, 255));
-        btnBuscarPrestamo.setForeground(new java.awt.Color(255, 255, 255));
-        btnBuscarPrestamo.setText("Buscar");
-        btnBuscarPrestamo.addActionListener(new java.awt.event.ActionListener() {
+        lblPersona.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        lblPersona.setText("Persona habilitada");
+
+        txtPersona.setEditable(false);
+
+        lblFechaPrevista.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        lblFechaPrevista.setText("Fecha prevista de devolución");
+
+        txtFechaPrevista.setEditable(false);
+        txtFechaPrevista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarPrestamoActionPerformed(evt);
+                txtFechaPrevistaActionPerformed(evt);
             }
         });
 
-        lblPersona.setText("Persona habilitada");
-
-        lblFechaPrevista.setText("Fecha prevista de devolución");
-
         btnConfirmarDevolucion.setBackground(new java.awt.Color(51, 153, 255));
+        btnConfirmarDevolucion.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         btnConfirmarDevolucion.setForeground(new java.awt.Color(255, 255, 255));
         btnConfirmarDevolucion.setText("Registrar Devolución");
         btnConfirmarDevolucion.addActionListener(new java.awt.event.ActionListener() {
@@ -99,86 +161,107 @@ public RegistrarDevolucion(int idPrestamo) {
             }
         });
 
-        btnCancelar.setBackground(new java.awt.Color(51, 153, 255));
-        btnCancelar.setForeground(new java.awt.Color(255, 255, 255));
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+        btnVolver.setBackground(new java.awt.Color(51, 153, 255));
+        btnVolver.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        btnVolver.setForeground(new java.awt.Color(255, 255, 255));
+        btnVolver.setText("Volver");
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
+                btnVolverActionPerformed(evt);
             }
         });
 
         jScrollPane2.setViewportView(listaRecursos);
 
+        lblRecursosPrestamo.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         lblRecursosPrestamo.setText("Recursos incluidos en el préstamo");
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Captura de pantalla 2026-09-23 081438.png"))); // NOI18N
+
+        lblFechaPrevista1.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        lblFechaPrevista1.setText("Fecha de entrega");
+
+        txtFechaEntrega.setEditable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(233, 233, 233)
-                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(88, 88, 88)
-                                .addComponent(btnConfirmarDevolucion)
-                                .addGap(72, 72, 72)
-                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txtIdPrestamo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblIdPrestamo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblPersona, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnBuscarPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(32, 32, 32))
+                        .addGap(98, 98, 98)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblFechaPrevista, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                        .addGap(105, 105, 105)
+                        .addComponent(btnConfirmarDevolucion, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(70, 70, 70)
+                        .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(29, 33, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(lblFechaPrevista1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtFechaEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(18, 18, 18)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(lblFechaPrevista, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtFechaPrevista, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(lblRecursosPrestamo)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblRecursosPrestamo)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtFechaPrevista, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
-                                .addComponent(txtPersona)
-                                .addComponent(jScrollPane2)))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addComponent(txtIdPrestamo)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblIdPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblIdPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnBuscarPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtIdPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblIdPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtPersona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtPersona, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+                    .addComponent(txtIdPrestamo))
                 .addGap(18, 18, 18)
-                .addComponent(lblFechaPrevista, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblFechaPrevista, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblFechaPrevista1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtFechaPrevista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtFechaPrevista, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                    .addComponent(txtFechaEntrega))
+                .addGap(18, 18, 18)
                 .addComponent(lblRecursosPrestamo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConfirmarDevolucion)
-                    .addComponent(btnCancelar))
-                .addGap(18, 18, 18))
+                    .addComponent(btnVolver))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
@@ -188,174 +271,97 @@ public RegistrarDevolucion(int idPrestamo) {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtIdPrestamoActionPerformed
 
-    private void btnBuscarPrestamoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarPrestamoActionPerformed
-        // TODO add your handling code here:
-        
-        
-prestamoSeleccionado = null;
-txtPersona.setText("");
-txtFechaPrevista.setText("");
-listaRecursos.setListData(new String[0]);
-btnConfirmarDevolucion.setEnabled(false);
-
-// Validar que se haya ingresado un número
-String numeroTexto = txtIdPrestamo.getText().trim();
-
-if (numeroTexto.isEmpty()) {
-    JOptionPane.showMessageDialog(this,
-            "Debe ingresar un número de préstamo.");
-    return;
-}
-
-int idPrestamo;
-
-try {
-    idPrestamo = Integer.parseInt(numeroTexto);
-
-    if (idPrestamo <= 0) {
-        JOptionPane.showMessageDialog(this,
-                "Ingrese un número de préstamo válido.");
-        return;
-    }
-
-} catch (NumberFormatException e) {
-    JOptionPane.showMessageDialog(this,
-            "El número de préstamo debe ser numérico.");
-    return;
-}
-
-// Buscar el préstamo en MySQL
-PrestamoDAO prestamoDAO = new PrestamoDAO();
-
-prestamoSeleccionado =
-        prestamoDAO.buscarPrestamoPendientePorId(idPrestamo);
-
-// Verificar si se encontró
-if (prestamoSeleccionado == null) {
-    JOptionPane.showMessageDialog(this,
-            "No se encontró un préstamo pendiente con ese número.");
-    return;
-}
-
-// Mostrar los datos de la persona
-txtPersona.setText(
-        prestamoSeleccionado.getPersona().getNombre()
-        + " "
-        + prestamoSeleccionado.getPersona().getApellido()
-);
-
-// Mostrar la fecha prevista de devolución
-DateTimeFormatter formato =
-        DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-txtFechaPrevista.setText(
-        prestamoSeleccionado.getFechaPrevDev().format(formato)
-);
-
-// Mostrar los recursos asociados
-DefaultListModel<String> modelo = new DefaultListModel<>();
-
-for (RecursoTecnologico recurso :
-        prestamoSeleccionado.getRecursos()) {
-
-    modelo.addElement(
-            recurso.getNombre()
-            + " - Cod.: "
-            + recurso.getCodigoInv()
-    );
-}
-
-listaRecursos.setModel(modelo);
-
-// Habilitar el botón de devolución
-btnConfirmarDevolucion.setEnabled(true);
-
-    }//GEN-LAST:event_btnBuscarPrestamoActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
+        dispose();        // TODO add your handling code here:
+    }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnConfirmarDevolucionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarDevolucionActionPerformed
-        
-if (prestamoSeleccionado == null) {
-    JOptionPane.showMessageDialog(
-            this,
-            "Primero debe buscar y seleccionar un préstamo.",
-            "Préstamo no seleccionado",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
+
+        if (prestamoSeleccionado == null) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Primero debe buscar y seleccionar un préstamo.",
+                    "Préstamo no seleccionado",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
 
 // Solicitar confirmación al usuario
-int confirmacion = JOptionPane.showConfirmDialog(
-        this,
-        "¿Desea registrar la devolución del préstamo N.º "
-        + prestamoSeleccionado.getIdPrestamo() + "?",
-        "Confirmar devolución",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-);
-
-// Si el usuario selecciona NO, cancelar la operación
-if (confirmacion != JOptionPane.YES_OPTION) {
-    return;
-}
-
-// Registrar devolución en la base de datos
-PrestamoDAO prestamoDAO = new PrestamoDAO();
-
-boolean devolucionRegistrada =
-        prestamoDAO.registrarDevolucion(
-                prestamoSeleccionado.getIdPrestamo()
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Desea registrar la devolución del préstamo N.º "
+                + prestamoSeleccionado.getIdPrestamo() + "?",
+                "Confirmar devolución",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
         );
 
-if (devolucionRegistrada) {
+// Si el usuario selecciona NO, cancelar la operación
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
 
-    JOptionPane.showMessageDialog(
-            this,
-            "Devolución registrada correctamente.",
-            "Operación exitosa",
-            JOptionPane.INFORMATION_MESSAGE
-    );
+// Registrar devolución en la base de datos
+        PrestamoDAO prestamoDAO = new PrestamoDAO();
 
-    // Limpiar el formulario
-    txtIdPrestamo.setText("");
-    txtPersona.setText("");
-    txtFechaPrevista.setText("");
+        boolean devolucionRegistrada
+                = prestamoDAO.registrarDevolucion(
+                        prestamoSeleccionado.getIdPrestamo()
+                );
 
-    listaRecursos.setListData(new String[0]);
+        if (devolucionRegistrada) {
 
-    prestamoSeleccionado = null;
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Devolución registrada correctamente.",
+                    "Operación exitosa",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
 
-    // Deshabilitar el botón hasta buscar otro préstamo
-    btnConfirmarDevolucion.setEnabled(false);
+            // Limpiar el formulario
+            txtIdPrestamo.setText("");
+            txtPersona.setText("");
+            txtFechaPrevista.setText("");
+            txtFechaEntrega.setText("");
 
-} else {
+            listaRecursos.setListData(new String[0]);
 
-    JOptionPane.showMessageDialog(
-            this,
-            "No se pudo registrar la devolución.",
-            "Error",
-            JOptionPane.ERROR_MESSAGE
-    );
-}
+            prestamoSeleccionado = null;
+
+            // Deshabilitar el botón hasta buscar otro préstamo
+            btnConfirmarDevolucion.setEnabled(false);
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se pudo registrar la devolución.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
 
     }//GEN-LAST:event_btnConfirmarDevolucionActionPerformed
 
+    private void txtFechaPrevistaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFechaPrevistaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtFechaPrevistaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBuscarPrestamo;
-    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConfirmarDevolucion;
+    private javax.swing.JButton btnVolver;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblFechaPrevista;
+    private javax.swing.JLabel lblFechaPrevista1;
     private javax.swing.JLabel lblIdPrestamo;
     private javax.swing.JLabel lblPersona;
     private javax.swing.JLabel lblRecursosPrestamo;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JList<String> listaRecursos;
+    private javax.swing.JTextField txtFechaEntrega;
     private javax.swing.JTextField txtFechaPrevista;
     private javax.swing.JTextField txtIdPrestamo;
     private javax.swing.JTextField txtPersona;
