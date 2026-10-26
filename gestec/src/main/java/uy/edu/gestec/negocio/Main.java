@@ -5,10 +5,12 @@
 package uy.edu.gestec.negocio;
 
 import uy.edu.gestec.presentacion.PantallaPrincipal;
+import uy.edu.gestec.presentacion.PantallaPrincipal;
+import uy.edu.gestec.presentacion.Login;
 
 /**
  *
- * @author sseba
+ * 
  */
 public class Main {
      /**
@@ -39,10 +41,12 @@ public class Main {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PantallaPrincipal().setVisible(true);
-            }
-        });
+        
+java.awt.EventQueue.invokeLater(new Runnable() {
+    public void run() {
+        new Login().setVisible(true);
     }
-}
+});
+
+        };
+    }
