@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package uy.edu.gestec.seguridad;
+package uy.edu.gestec.negocio;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -105,6 +105,9 @@ public class SeguridadContrasena {
             especificacion.clearPassword();
         }
     }
+    
+
+    
 }
 
 

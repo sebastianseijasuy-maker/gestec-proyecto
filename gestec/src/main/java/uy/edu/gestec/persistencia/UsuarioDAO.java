@@ -62,6 +62,42 @@ public class UsuarioDAO {
 
         return null;
     }
+    
+    public boolean actualizarContrasena(int idUsuario, String nuevoHash) {
+
+    String sql = "UPDATE usuario SET password_hash = ? WHERE id_usuario = ?";
+
+    try (Connection conexion = ConexionBD.conectar();
+         PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+        ps.setString(1, nuevoHash);
+        ps.setInt(2, idUsuario);
+
+        return ps.executeUpdate() == 1;
+
+    } catch (SQLException e) {
+        System.out.println("Error al actualizar contraseña: " + e.getMessage());
+        return false;
+    }
+}
+
+public boolean actualizarNombreUsuario(int idUsuario, String nuevoNombre) {
+
+    String sql = "UPDATE usuario SET nombre_usuario = ? WHERE id_usuario = ?";
+
+    try (Connection conexion = ConexionBD.conectar();
+         PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+        ps.setString(1, nuevoNombre);
+        ps.setInt(2, idUsuario);
+
+        return ps.executeUpdate() == 1;
+
+    } catch (SQLException e) {
+        System.out.println("Error al actualizar usuario: " + e.getMessage());
+        return false;
+    }
+}    
 }
 
     
