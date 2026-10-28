@@ -42,7 +42,7 @@ public class MantenimientoDAO {
         }
     }
 
-    // Consultar el historial de un recurso
+
     public List<Mantenimiento> consultarPorRecurso(int idRecurso) {
 
         List<Mantenimiento> mantenimientos = new ArrayList<>();

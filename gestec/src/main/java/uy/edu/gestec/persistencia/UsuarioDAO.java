@@ -98,6 +98,79 @@ public boolean actualizarNombreUsuario(int idUsuario, String nuevoNombre) {
         return false;
     }
 }    
+
+public boolean completarConfiguracionInicial(
+        int idUsuario,
+        int idPersona,
+        String documento,
+        String nombre,
+        String apellido,
+        String nuevoUsuario,
+        String nuevoHash) {
+
+    String sqlPersona = "UPDATE persona "
+            + "SET documento = ?, nombre = ?, apellido = ? "
+            + "WHERE id_persona = ? AND documento = 'GESTEC-ADMIN'";
+
+    String sqlUsuario = "UPDATE usuario "
+            + "SET nombre_usuario = ?, password_hash = ? "
+            + "WHERE id_usuario = ? AND id_persona = ?";
+
+    try (Connection conexion = ConexionBD.conectar()) {
+
+        conexion.setAutoCommit(false);
+
+        try {
+            // Actualizar datos personales
+            try (PreparedStatement ps =
+                    conexion.prepareStatement(sqlPersona)) {
+
+                ps.setString(1, documento);
+                ps.setString(2, nombre);
+                ps.setString(3, apellido);
+                ps.setInt(4, idPersona);
+
+                if (ps.executeUpdate() != 1) {
+                    conexion.rollback();
+                    return false;
+                }
+            }
+
+            // Actualizar credenciales
+            try (PreparedStatement ps =
+                    conexion.prepareStatement(sqlUsuario)) {
+
+                ps.setString(1, nuevoUsuario);
+                ps.setString(2, nuevoHash);
+                ps.setInt(3, idUsuario);
+                ps.setInt(4, idPersona);
+
+                if (ps.executeUpdate() != 1) {
+                    conexion.rollback();
+                    return false;
+                }
+            }
+
+            conexion.commit();
+            return true;
+
+        } catch (SQLException e) {
+            conexion.rollback();
+            System.out.println(
+                    "Error en configuración inicial: "
+                    + e.getMessage()
+            );
+            return false;
+        }
+
+    } catch (SQLException e) {
+        System.out.println(
+                "Error de conexión: " + e.getMessage()
+        );
+        return false;
+    }
+}
+
 }
 
     
