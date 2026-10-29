@@ -16,7 +16,28 @@ public class UsuarioDAO {
     
 
 
+public boolean existeUsuarioParaPersona(int idPersona) {
 
+    String sql = "SELECT COUNT(*) FROM usuario WHERE id_persona = ?";
+
+    try (Connection conexion = ConexionBD.conectar();
+         PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+        ps.setInt(1, idPersona);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+
+    } catch (SQLException e) {
+        throw new IllegalStateException(
+                "Error al comprobar si la persona tiene usuario.", e);
+    }
+
+    return false;
+}
 
     public Usuario buscarPorNombreUsuario(String nombreUsuario) {
 
@@ -167,6 +188,114 @@ public boolean completarConfiguracionInicial(
         System.out.println(
                 "Error de conexión: " + e.getMessage()
         );
+        return false;
+    }
+}
+
+public boolean registrarUsuarioPOITE(
+        Integer idPersona,
+        String documento,
+        String nombre,
+        String apellido,
+        String nombreUsuario,
+        String passwordHash) {
+
+    String sqlBuscar = "SELECT id_persona FROM persona "
+            + "WHERE documento = ?";
+
+    String sqlPersona = "INSERT INTO persona "
+            + "(documento, nombre, apellido) VALUES (?, ?, ?)";
+
+    String sqlUsuario = "INSERT INTO usuario "
+            + "(id_persona, nombre_usuario, password_hash) "
+            + "VALUES (?, ?, ?)";
+
+    try (Connection conexion = ConexionBD.conectar()) {
+
+        conexion.setAutoCommit(false);
+
+        try {
+            int idPersonaFinal;
+
+            if (idPersona == null) {
+
+                // Verificar que no se haya registrado
+                // la persona desde la búsqueda.
+                try (PreparedStatement ps =
+                        conexion.prepareStatement(sqlBuscar)) {
+
+                    ps.setString(1, documento);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            conexion.rollback();
+                            return false;
+                        }
+                    }
+                }
+
+                // Registrar persona nueva.
+                try (PreparedStatement ps =
+                        conexion.prepareStatement(
+                                sqlPersona,
+                                java.sql.Statement.RETURN_GENERATED_KEYS)) {
+
+                    ps.setString(1, documento);
+                    ps.setString(2, nombre);
+                    ps.setString(3, apellido);
+
+                    if (ps.executeUpdate() != 1) {
+                        conexion.rollback();
+                        return false;
+                    }
+
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        if (!rs.next()) {
+                            conexion.rollback();
+                            return false;
+                        }
+
+                        idPersonaFinal = rs.getInt(1);
+                    }
+                }
+
+            } else {
+                // Persona existente.
+                idPersonaFinal = idPersona;
+            }
+
+            // Crear la cuenta de acceso.
+            try (PreparedStatement ps =
+                    conexion.prepareStatement(sqlUsuario)) {
+
+                ps.setInt(1, idPersonaFinal);
+                ps.setString(2, nombreUsuario);
+                ps.setString(3, passwordHash);
+
+                if (ps.executeUpdate() != 1) {
+                    conexion.rollback();
+                    return false;
+                }
+            }
+
+            conexion.commit();
+            return true;
+
+        } catch (SQLException e) {
+
+            conexion.rollback();
+
+            System.out.println(
+                    "Error al registrar POITE: " + e.getMessage());
+
+            return false;
+        }
+
+    } catch (SQLException e) {
+
+        System.out.println(
+                "Error de conexión: " + e.getMessage());
+
         return false;
     }
 }

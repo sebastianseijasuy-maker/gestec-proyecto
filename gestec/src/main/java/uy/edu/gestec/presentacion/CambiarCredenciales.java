@@ -3,12 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package uy.edu.gestec.presentacion;
+
 import uy.edu.gestec.negocio.Usuario;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
 import uy.edu.gestec.negocio.Usuario;
 import uy.edu.gestec.negocio.SeguridadContrasena;
 import uy.edu.gestec.persistencia.UsuarioDAO;
+
 /**
  *
  * @author sseba
@@ -18,16 +20,16 @@ public class CambiarCredenciales extends javax.swing.JFrame {
     private Usuario usuarioActual;
 
     public CambiarCredenciales(Usuario usuario) {
-    initComponents();
-    setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-    this.usuarioActual = usuario;
+        this.usuarioActual = usuario;
 
-    setLocationRelativeTo(null);
-    setTitle("GESTEC - Cambiar credenciales");
+        setLocationRelativeTo(null);
+        setTitle("GESTEC - Cambiar credenciales");
 
-    txtUsuario.setText(usuario.getNombreUsuario());
-}
+        txtUsuario.setText(usuario.getNombreUsuario());
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -111,6 +113,7 @@ public class CambiarCredenciales extends javax.swing.JFrame {
         });
 
         jLabel5.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(12, 55, 96));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setText("Configuración inicial");
 
@@ -246,105 +249,104 @@ public class CambiarCredenciales extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
- String documento = txtDocumento.getText().trim();
-    String nombre = txtNombre.getText().trim();
-    String apellido = txtApellido.getText().trim();
-    String nuevoUsuario = txtUsuario.getText().trim();
+        String documento = txtDocumento.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        String apellido = txtApellido.getText().trim();
+        String nuevoUsuario = txtUsuario.getText().trim();
 
-    char[] actual = txtContrasenaActual.getPassword();
-    char[] nueva = txtNuevaContrasena.getPassword();
-    char[] confirmar = txtConfirmar.getPassword();
+        char[] actual = txtContrasenaActual.getPassword();
+        char[] nueva = txtNuevaContrasena.getPassword();
+        char[] confirmar = txtConfirmar.getPassword();
 
-    try {
+        try {
 
-        if (documento.isEmpty()
-                || nombre.isEmpty()
-                || apellido.isEmpty()
-                || nuevoUsuario.isEmpty()
-                || actual.length == 0
-                || nueva.length == 0
-                || confirmar.length == 0) {
+            if (documento.isEmpty()
+                    || nombre.isEmpty()
+                    || apellido.isEmpty()
+                    || nuevoUsuario.isEmpty()
+                    || actual.length == 0
+                    || nueva.length == 0
+                    || confirmar.length == 0) {
 
-            JOptionPane.showMessageDialog(this,
-                    "Complete todos los campos.");
-            return;
-        }
+                JOptionPane.showMessageDialog(this,
+                        "Complete todos los campos.");
+                return;
+            }
 
-        if (!"GESTEC-ADMIN".equals(usuarioActual.getDocumento())) {
-            JOptionPane.showMessageDialog(this,
-                    "Esta cuenta ya fue configurada.");
-            return;
-        }
+            if (!"GESTEC-ADMIN".equals(usuarioActual.getDocumento())) {
+                JOptionPane.showMessageDialog(this,
+                        "Esta cuenta ya fue configurada.");
+                return;
+            }
 
-        if (!SeguridadContrasena.verificarContrasena(
-                actual, usuarioActual.getPasswordHash())) {
+            if (!SeguridadContrasena.verificarContrasena(
+                    actual, usuarioActual.getPasswordHash())) {
 
-            JOptionPane.showMessageDialog(this,
-                    "La contraseña actual es incorrecta.");
-            return;
-        }
+                JOptionPane.showMessageDialog(this,
+                        "La contraseña actual es incorrecta.");
+                return;
+            }
 
-        if (!Arrays.equals(nueva, confirmar)) {
+            if (!Arrays.equals(nueva, confirmar)) {
 
-            JOptionPane.showMessageDialog(this,
-                    "Las contraseñas nuevas no coinciden.");
-            return;
-        }
+                JOptionPane.showMessageDialog(this,
+                        "Las contraseñas nuevas no coinciden.");
+                return;
+            }
 
-        if (Arrays.equals(actual, nueva)) {
+            if (Arrays.equals(actual, nueva)) {
 
-            JOptionPane.showMessageDialog(this,
-                    "La nueva contraseña debe ser diferente a la actual.");
-            return;
-        }
+                JOptionPane.showMessageDialog(this,
+                        "La nueva contraseña debe ser diferente a la actual.");
+                return;
+            }
 
-        String nuevoHash =
-                SeguridadContrasena.generarHash(nueva);
+            String nuevoHash
+                    = SeguridadContrasena.generarHash(nueva);
 
-        UsuarioDAO dao = new UsuarioDAO();
+            UsuarioDAO dao = new UsuarioDAO();
 
-        boolean actualizado = dao.completarConfiguracionInicial(
-                usuarioActual.getIdUsuario(),
-                usuarioActual.getIdPersona(),
-                documento,
-                nombre,
-                apellido,
-                nuevoUsuario,
-                nuevoHash
-        );
+            boolean actualizado = dao.completarConfiguracionInicial(
+                    usuarioActual.getIdUsuario(),
+                    usuarioActual.getIdPersona(),
+                    documento,
+                    nombre,
+                    apellido,
+                    nuevoUsuario,
+                    nuevoHash
+            );
 
-        if (actualizado) {
+            if (actualizado) {
 
-            JOptionPane.showMessageDialog(this,
-                    "Configuración inicial completada correctamente.");
+                JOptionPane.showMessageDialog(this,
+                        "Configuración inicial completada correctamente.");
 
-            new PantallaPrincipal().setVisible(true);
-            dispose();
+                new PantallaPrincipal().setVisible(true);
+                dispose();
 
-        } else {
+            } else {
 
-            JOptionPane.showMessageDialog(this,
-                    "No se pudo completar la configuración.\n"
-                    + "Verifique que el documento y el usuario "
-                    + "no estén registrados.");
-        }
+                JOptionPane.showMessageDialog(this,
+                        "No se pudo completar la configuración.\n"
+                        + "Verifique que el documento y el usuario "
+                        + "no estén registrados.");
+            }
 
-    } finally {
+        } finally {
 
-        Arrays.fill(actual, '\0');
-        Arrays.fill(nueva, '\0');
-        Arrays.fill(confirmar, '\0');
-    
-    
+            Arrays.fill(actual, '\0');
+            Arrays.fill(nueva, '\0');
+            Arrays.fill(confirmar, '\0');
+
+
 }    }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-Login login = new Login();
-    login.setVisible(true);
-    this.dispose();        // TODO add your handling code here:
+        Login login = new Login();
+        login.setVisible(true);
+        this.dispose();        // TODO add your handling code here:
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
