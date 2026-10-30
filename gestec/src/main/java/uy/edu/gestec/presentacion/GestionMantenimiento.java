@@ -15,7 +15,13 @@ public class GestionMantenimiento extends javax.swing.JFrame {
      */
     public GestionMantenimiento() {
         initComponents();
-    }
+         setDefaultCloseOperation(
+        javax.swing.WindowConstants.DISPOSE_ON_CLOSE
+    );
+
+    setLocationRelativeTo(null);
+}
+    
 
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -41,6 +47,11 @@ public class GestionMantenimiento extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Registrar incidencia");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(15, 126, 190));
         jButton2.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
@@ -135,6 +146,13 @@ public class GestionMantenimiento extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+RegistrarIncidencia ventana = new RegistrarIncidencia();
+ventana.setVisible(true);
+
+    }//GEN-LAST:event_jButton1ActionPerformed
 
    
 
