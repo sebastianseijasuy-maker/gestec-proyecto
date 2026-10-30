@@ -750,8 +750,9 @@ if (modificado) {
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        
-this.dispose();
+        PantallaPrincipal ventana = new PantallaPrincipal();
+        ventana.setVisible(true);
+        this.dispose();
 
     }//GEN-LAST:event_btnVolverActionPerformed
 

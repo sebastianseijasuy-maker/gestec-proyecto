@@ -273,7 +273,10 @@ private void cargarPrestamo(int idPrestamo) {
     }//GEN-LAST:event_txtIdPrestamoActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        dispose();        // TODO add your handling code here:
+        MenuPrestamo ventana = new MenuPrestamo();
+        ventana.setVisible(true);
+        this.dispose();
+        
     }//GEN-LAST:event_btnVolverActionPerformed
 
     private void btnConfirmarDevolucionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarDevolucionActionPerformed

@@ -176,4 +176,50 @@ return false;
 return false;   
     }
 
+    
+public List<RecursoTecnologico> buscarParaMantenimiento(String busqueda) {
+
+    List<RecursoTecnologico> recursos = new ArrayList<>();
+
+    String sql = "SELECT id_recurso, codigo_inv, nombre, "
+            + "categoria, condicion, disponibilidad, baja_logica "
+            + "FROM recurso_tecnologico "
+            + "WHERE (nombre LIKE ? OR codigo_inv LIKE ?) "
+            + "AND baja_logica = false "
+            + "ORDER BY nombre";
+
+    try (Connection conexion = ConexionBD.conectar();
+         PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+        String filtro = "%" + busqueda.trim() + "%";
+
+        ps.setString(1, filtro);
+        ps.setString(2, filtro);
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                RecursoTecnologico recurso = new RecursoTecnologico(
+                        rs.getInt("id_recurso"),
+                        rs.getString("codigo_inv"),
+                        rs.getString("nombre"),
+                        rs.getString("categoria"),
+                        rs.getString("condicion"),
+                        rs.getBoolean("disponibilidad"),
+                        rs.getBoolean("baja_logica")
+                );
+
+                recursos.add(recurso);
+            }
+        }
+
+    } catch (SQLException e) {
+        throw new IllegalStateException(
+                "Error al buscar recursos para mantenimiento.", e);
+    }
+
+    return recursos;
+}
+
 }
