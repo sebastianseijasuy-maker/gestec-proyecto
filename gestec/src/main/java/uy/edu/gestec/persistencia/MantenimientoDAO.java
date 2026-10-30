@@ -14,47 +14,85 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  *
  * @author sseba
  */
 public class MantenimientoDAO {
-    
-    public boolean registrarMantenimiento (int idRecurso, String detalleTecnico){
-        
-        String sql = "INSERT INTO mantenimiento "
-                    + "(id_recurso, detalle_tecnico)"
-                    + "VALUES (?,?)";
-        
-        try (Connection conexion = ConexionBD.conectar();
-             PreparedStatement ps = conexion.prepareStatement(sql)) {
-            
-            ps.setInt(1, idRecurso);
-            ps.setString(2, detalleTecnico);
 
-            return ps.executeUpdate() == 1;
+        public boolean registrarMantenimiento(
+        int idRecurso,
+        String detalleTecnico,
+        String condicionFinal) {
+
+    String sqlMantenimiento = "INSERT INTO mantenimiento "
+            + "(id_recurso, detalle_tecnico) VALUES (?, ?)";
+
+    String sqlRecurso = "UPDATE recurso_tecnologico "
+            + "SET condicion = ?, disponibilidad = ? "
+            + "WHERE id_recurso = ? AND baja_logica = false";
+
+    try (Connection conexion = ConexionBD.conectar()) {
+
+        conexion.setAutoCommit(false);
+
+        try {
+            // 1. Actualizar la condición del recurso
+            try (PreparedStatement ps = conexion.prepareStatement(sqlRecurso)) {
+
+                ps.setString(1, condicionFinal);
+
+                // Disponible solamente si está operativo
+                ps.setBoolean(2,
+                        condicionFinal.equalsIgnoreCase("operativo"));
+
+                ps.setInt(3, idRecurso);
+
+                if (ps.executeUpdate() != 1) {
+                    conexion.rollback();
+                    return false;
+                }
+            }
+
+            // 2. Registrar el mantenimiento
+            try (PreparedStatement ps = conexion.prepareStatement(sqlMantenimiento)) {
+
+                ps.setInt(1, idRecurso);
+                ps.setString(2, detalleTecnico);
+
+                if (ps.executeUpdate() != 1) {
+                    conexion.rollback();
+                    return false;
+                }
+            }
+
+            conexion.commit();
+            return true;
 
         } catch (SQLException e) {
-            System.out.println("Error al registrar mantenimiento: "
-                    + e.getMessage());
-            return false;
+            conexion.rollback();
+            throw e;
         }
+
+    } catch (SQLException e) {
+        System.out.println("Error al registrar mantenimiento: "
+                + e.getMessage());
+        return false;
     }
 
+    }
 
     public List<Mantenimiento> consultarPorRecurso(int idRecurso) {
 
         List<Mantenimiento> mantenimientos = new ArrayList<>();
 
         String sql = "SELECT id_mantenimiento, fecha_inicio, "
-                   + "detalle_tecnico, id_recurso "
-                   + "FROM mantenimiento "
-                   + "WHERE id_recurso = ? "
-                   + "ORDER BY fecha_inicio DESC, id_mantenimiento DESC";
+                + "detalle_tecnico, id_recurso "
+                + "FROM mantenimiento "
+                + "WHERE id_recurso = ? "
+                + "ORDER BY fecha_inicio DESC, id_mantenimiento DESC";
 
-        try (Connection conexion = ConexionBD.conectar();
-             PreparedStatement ps = conexion.prepareStatement(sql)) {
+        try (Connection conexion = ConexionBD.conectar(); PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setInt(1, idRecurso);
 
