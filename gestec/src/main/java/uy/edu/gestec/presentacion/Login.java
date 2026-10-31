@@ -6,6 +6,7 @@ package uy.edu.gestec.presentacion;
 
 import uy.edu.gestec.persistencia.UsuarioDAO;
 import uy.edu.gestec.negocio.Usuario;
+import uy.edu.gestec.negocio.GestionUsuario;
 import uy.edu.gestec.negocio.SeguridadContrasena;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
@@ -149,84 +150,66 @@ public class Login extends javax.swing.JFrame {
 
     private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
         
-String nombreUsuario = txtUsuario.getText().trim();
-char[] contrasena = txtContrasena.getPassword();
 
-try {
 
-    // Verificar que ambos campos estén completos
-    if (nombreUsuario.isEmpty() || contrasena.length == 0) {
+    String nombreUsuario = txtUsuario.getText().trim();
+    char[] contrasena = txtContrasena.getPassword();
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Debe ingresar usuario y contraseña.",
-                "Datos incompletos",
-                JOptionPane.WARNING_MESSAGE
+    try {
+
+        if (nombreUsuario.isEmpty() || contrasena.length == 0) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debe ingresar usuario y contraseña.",
+                    "Datos incompletos",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        GestionUsuario gestion = new GestionUsuario();
+
+        Usuario usuario = gestion.autenticar(
+                nombreUsuario, contrasena
         );
 
-        return;
-    }
+        if (usuario == null) {
 
-    // Buscar el usuario en MySQL
-    UsuarioDAO usuarioDAO = new UsuarioDAO();
-
-    Usuario usuario =
-            usuarioDAO.buscarPorNombreUsuario(nombreUsuario);
-
-    // Verificar la contraseña ingresada
-    boolean accesoCorrecto =
-            usuario != null
-            && SeguridadContrasena.verificarContrasena(
-                    contrasena,
-                    usuario.getPasswordHash()
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Usuario o contraseña incorrectos.",
+                    "Acceso denegado",
+                    JOptionPane.ERROR_MESSAGE
             );
 
-    if (accesoCorrecto) {
+            txtContrasena.setText("");
+            txtContrasena.requestFocusInWindow();
+            return;
+        }
 
-    boolean claveInicial =
-            "admin".equals(usuario.getNombreUsuario())
-            && SeguridadContrasena.verificarContrasena(
-                    "admin".toCharArray(),
-                    usuario.getPasswordHash()
-            );
+        if (gestion.requiereCambioInicial(usuario)) {
 
-    if (claveInicial) {
+            CambiarCredenciales ventana =
+                    new CambiarCredenciales(usuario);
 
-        CambiarCredenciales ventana =
-                new CambiarCredenciales(usuario);
+            ventana.setVisible(true);
 
-        ventana.setVisible(true);
+        } else {
 
-    } else {
+            PantallaPrincipal principal =
+                    new PantallaPrincipal();
 
-        PantallaPrincipal principal =
-                new PantallaPrincipal();
+            principal.setVisible(true);
+        }
 
-        principal.setVisible(true);
+        this.dispose();
+
+    } finally {
+
+        Arrays.fill(contrasena, '\0');
     }
 
-    this.dispose();
-
-
-    } else {
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Usuario o contraseña incorrectos.",
-                "Acceso denegado",
-                JOptionPane.ERROR_MESSAGE
-        );
-
-        // Limpiar solamente la contraseña
-        txtContrasena.setText("");
-        txtContrasena.requestFocusInWindow();
-    }
-
-} finally {
-
-    // Limpiar la contraseña del arreglo de memoria
-    Arrays.fill(contrasena, '\0');
-}
 
     }//GEN-LAST:event_btnIngresarActionPerformed
 

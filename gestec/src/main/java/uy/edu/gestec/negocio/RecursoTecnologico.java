@@ -33,7 +33,7 @@ public class RecursoTecnologico {
         this.categoria=categoria;
         this.condicion=condicion;
         this.disponibilidad=disponibilidad;
-        this.bajaLogica=bajaLogica;
+        this.bajaLogica = baja_logica;
     }
     
     //constructor para cuando damos de alta un nuevo recurso

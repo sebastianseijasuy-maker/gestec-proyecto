@@ -9,8 +9,8 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import uy.edu.gestec.negocio.RecursoTecnologico;
-import uy.edu.gestec.persistencia.RecursoTecnologicoDAO;
-import uy.edu.gestec.persistencia.IncidenciaDAO;
+import uy.edu.gestec.negocio.ServicioRecursoTecnologico;
+import uy.edu.gestec.negocio.GestionIncidencia;
 /**
  *
  * @author jjaam
@@ -238,12 +238,12 @@ DefaultTableModel modelo =
 modelo.setRowCount(0);
 
 // Buscar recursos en MySQL
-RecursoTecnologicoDAO dao =
-        new RecursoTecnologicoDAO();
+ServicioRecursoTecnologico servicio =
+        new ServicioRecursoTecnologico();
 
 try {
-    List<RecursoTecnologico> recursos =
-            dao.buscarParaMantenimiento(busqueda);
+List<RecursoTecnologico> recursos =
+        servicio.buscarParaMantenimiento(busqueda);
 
     recursosEncontrados.addAll(recursos);
 
@@ -347,9 +347,9 @@ if (confirmacion != JOptionPane.YES_OPTION) {
 }
 
 // Guardar en MySQL
-IncidenciaDAO dao = new IncidenciaDAO();
+GestionIncidencia servicio = new GestionIncidencia();
 
-boolean registrado = dao.registrarIncidencia(
+boolean registrado = servicio.registrarIncidencia(
         recurso.getIdRecurso(),
         tipoIncidencia,
         descripcion

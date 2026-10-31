@@ -4,16 +4,13 @@
  */
 package uy.edu.gestec.presentacion;
 
-import uy.edu.gestec.persistencia.PersonaDAO;
-
-import uy.edu.gestec.persistencia.PersonaHabilitadaDAO;
-import javax.swing.JOptionPane;
 import uy.edu.gestec.negocio.Persona;
 import uy.edu.gestec.negocio.PersonaHabilitada;
-import uy.edu.gestec.persistencia.UsuarioDAO;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
 import uy.edu.gestec.negocio.SeguridadContrasena;
+import uy.edu.gestec.negocio.GestionPersona;
+import uy.edu.gestec.negocio.GestionUsuario;
 
 /**
  *
@@ -29,6 +26,16 @@ public class RegistrarUsuario extends javax.swing.JFrame {
      */
     public RegistrarUsuario() {
         initComponents();
+
+        txtContrasena.setText("");
+        txtConfirmar.setText("");
+
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(
+                javax.swing.WindowConstants.DISPOSE_ON_CLOSE
+        );
+
     }
 
     /**
@@ -231,20 +238,18 @@ public class RegistrarUsuario extends javax.swing.JFrame {
                     "Debe ingresar un documento.");
             return;
         }
-        PersonaDAO dao = new PersonaDAO();
+        GestionPersona gestionPersona = new GestionPersona();
 
-        Persona persona = dao.buscarPorDocumento(documento);
+        Persona persona = gestionPersona.buscarPorDocumento(documento);
 
         if (persona != null) {
 
             personaSeleccionada = persona;
             busquedaRealizada = true;
 
-            // Comprobar si ya tiene usuario
-            UsuarioDAO usuarioDAO = new UsuarioDAO();
-
+            GestionUsuario gestionUsuario = new GestionUsuario();
             try {
-                if (usuarioDAO.existeUsuarioParaPersona(
+                if (gestionUsuario.existeUsuarioParaPersona(
                         persona.getIdPersona())) {
 
                     JOptionPane.showMessageDialog(this,
@@ -294,110 +299,108 @@ public class RegistrarUsuario extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
-String documento = txtDocumento.getText().trim();
-String nombre = txtNombre.getText().trim();
-String apellido = txtApellido.getText().trim();
-String nombreUsuario = txtUsuario.getText().trim();
+        String documento = txtDocumento.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        String apellido = txtApellido.getText().trim();
+        String nombreUsuario = txtUsuario.getText().trim();
 
-char[] contrasena = txtContrasena.getPassword();
-char[] confirmar = txtConfirmar.getPassword();
+        char[] contrasena = txtContrasena.getPassword();
+        char[] confirmar = txtConfirmar.getPassword();
 
-try {
+        try {
 
-    // Verificar que se haya buscado la persona.
-    if (!busquedaRealizada) {
+            // Verificar que se haya buscado la persona.
+            if (!busquedaRealizada) {
 
-        JOptionPane.showMessageDialog(this,
-                "Primero debe buscar la persona por documento.");
-        return;
-    }
+                JOptionPane.showMessageDialog(this,
+                        "Primero debe buscar la persona por documento.");
+                return;
+            }
 
-    // Validar campos obligatorios.
-    if (documento.isEmpty()
-            || nombre.isEmpty()
-            || apellido.isEmpty()
-            || nombreUsuario.isEmpty()
-            || contrasena.length == 0
-            || confirmar.length == 0) {
+            // Validar campos obligatorios.
+            if (documento.isEmpty()
+                    || nombre.isEmpty()
+                    || apellido.isEmpty()
+                    || nombreUsuario.isEmpty()
+                    || contrasena.length == 0
+                    || confirmar.length == 0) {
 
-        JOptionPane.showMessageDialog(this,
-                "Complete todos los campos.");
-        return;
-    }
+                JOptionPane.showMessageDialog(this,
+                        "Complete todos los campos.");
+                return;
+            }
 
-    // Comprobar las contraseñas.
-    if (!Arrays.equals(contrasena, confirmar)) {
+            // Comprobar las contraseñas.
+            if (!Arrays.equals(contrasena, confirmar)) {
 
-        JOptionPane.showMessageDialog(this,
-                "Las contraseñas no coinciden.");
-        return;
-    }
+                JOptionPane.showMessageDialog(this,
+                        "Las contraseñas no coinciden.");
+                return;
+            }
 
-    // Verificar longitud mínima.
-    if (contrasena.length < 8) {
+            // Verificar longitud mínima.
+            if (contrasena.length < 8) {
 
-        JOptionPane.showMessageDialog(this,
-                "La contraseña debe tener al menos 8 caracteres.");
-        return;
-    }
+                JOptionPane.showMessageDialog(this,
+                        "La contraseña debe tener al menos 8 caracteres.");
+                return;
+            }
 
-    // Confirmar el registro.
-    int opcion = JOptionPane.showConfirmDialog(
-            this,
-            "¿Desea habilitar el acceso a GESTEC para "
+            // Confirmar el registro.
+            int opcion = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Desea habilitar el acceso a GESTEC para "
                     + nombre + " " + apellido + "?",
-            "Confirmar registro",
-            JOptionPane.YES_NO_OPTION
-    );
+                    "Confirmar registro",
+                    JOptionPane.YES_NO_OPTION
+            );
 
-    if (opcion != JOptionPane.YES_OPTION) {
-        return;
-    }
+            if (opcion != JOptionPane.YES_OPTION) {
+                return;
+            }
 
-    // Generar el hash PBKDF2.
-    String hash = SeguridadContrasena.generarHash(contrasena);
+// Obtener ID si la persona ya existe
+            Integer idPersona = null;
 
-    // Obtener ID si la persona ya existe.
-    Integer idPersona = null;
+            if (personaSeleccionada != null) {
+                idPersona = personaSeleccionada.getIdPersona();
+            }
 
-    if (personaSeleccionada != null) {
-        idPersona = personaSeleccionada.getIdPersona();
-    }
+// Solicitar el registro a negocio
+            GestionUsuario gestionUsuario = new GestionUsuario();
 
-    UsuarioDAO dao = new UsuarioDAO();
+            boolean registrado = gestionUsuario.registrarUsuarioPOITE(
+                    idPersona,
+                    documento,
+                    nombre,
+                    apellido,
+                    nombreUsuario,
+                    contrasena
+            );
 
-    boolean registrado = dao.registrarUsuarioPOITE(
-            idPersona,
-            documento,
-            nombre,
-            apellido,
-            nombreUsuario,
-            hash
-    );
+            if (registrado) {
 
-    if (registrado) {
-
-        JOptionPane.showMessageDialog(this,
-                "Acceso habilitado correctamente para "
+                JOptionPane.showMessageDialog(this,
+                        "Acceso habilitado correctamente para "
                         + nombre + " " + apellido + ".");
 
-        dispose();
+                dispose();
 
-    } else {
+            } else {
 
-        JOptionPane.showMessageDialog(this,
-                "No se pudo habilitar el acceso.\n"
-                + "Verifique que el documento o el nombre "
-                + "de usuario no estén registrados.",
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
-    }
+                JOptionPane.showMessageDialog(this,
+                        "No se pudo habilitar el acceso.\n"
+                        + "Verifique que el documento o el nombre "
+                        + "de usuario no estén registrados.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
 
-} finally {
+        } finally {
 
-    Arrays.fill(contrasena, '\0');
-    Arrays.fill(confirmar, '\0');
-}
+            Arrays.fill(contrasena, '\0');
+            Arrays.fill(confirmar, '\0');
+        }
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 

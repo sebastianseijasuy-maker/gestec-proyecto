@@ -9,10 +9,9 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import uy.edu.gestec.negocio.RecursoTecnologico;
-import uy.edu.gestec.persistencia.RecursoTecnologicoDAO;
+import uy.edu.gestec.negocio.ServicioRecursoTecnologico;
+import uy.edu.gestec.negocio.ServicioMantenimiento;
 import java.util.ArrayList;
-import java.util.List;
-import uy.edu.gestec.persistencia.MantenimientoDAO;
 import uy.edu.gestec.presentacion.GestionMantenimiento;
 
 /**
@@ -26,14 +25,18 @@ public class RegistrarMantenimiento extends javax.swing.JFrame {
      */
     public RegistrarMantenimiento() {
         initComponents();
-                setTitle("GESTEC - Registrar Mantenimiento");
+        setDefaultCloseOperation(
+                javax.swing.WindowConstants.DISPOSE_ON_CLOSE
+        );
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setTitle("GESTEC - Registrar Mantenimiento");
 
         tablaRecursos.setSelectionMode(
                 ListSelectionModel.SINGLE_SELECTION);
 
         tablaRecursos.setDefaultEditor(Object.class, null);
-        
-        
+
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -220,11 +223,11 @@ public class RegistrarMantenimiento extends javax.swing.JFrame {
             return;
         }
 
-        RecursoTecnologicoDAO dao = new RecursoTecnologicoDAO();
+        ServicioRecursoTecnologico servicio = new ServicioRecursoTecnologico();
 
         try {
             List<RecursoTecnologico> recursos
-                    = dao.buscarParaMantenimiento(busqueda);
+                    = servicio.buscarParaMantenimiento(busqueda);
             recursosEncontrados.addAll(recursos);
 
             for (RecursoTecnologico recurso : recursos) {
@@ -290,18 +293,17 @@ public class RegistrarMantenimiento extends javax.swing.JFrame {
             return;
         }
 
-        // Guardar en la base de datos
-        MantenimientoDAO dao = new MantenimientoDAO();
+        ServicioMantenimiento servicio
+                = new ServicioMantenimiento();
 
+        String condicionFinal
+                = (String) cmbCondicionFinal.getSelectedItem();
 
-String condicionFinal =
-        cmbCondicionFinal.getSelectedItem().toString();
-
-boolean registrado = dao.registrarMantenimiento(
-        recurso.getIdRecurso(),
-        detalle,
-        condicionFinal
-);
+        boolean registrado = servicio.registrarMantenimiento(
+                recurso.getIdRecurso(),
+                detalle,
+                condicionFinal
+        );
 
         if (registrado) {
 

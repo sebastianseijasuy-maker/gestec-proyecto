@@ -9,7 +9,6 @@ import uy.edu.gestec.negocio.PersonaHabilitada;
 import uy.edu.gestec.negocio.Persona;
 import uy.edu.gestec.persistencia.RecursoTecnologicoDAO;
 import uy.edu.gestec.negocio.RecursoTecnologico;
-import uy.edu.gestec.persistencia.PrestamoDAO;
 import uy.edu.gestec.negocio.Prestamo;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -20,12 +19,14 @@ import uy.edu.gestec.negocio.PersonaHabilitada;
 import uy.edu.gestec.negocio.Usuario;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
+import uy.edu.gestec.negocio.GestionPrestamo;
 
 /**
  *
  * @author Sebastian Seijas
  * @author Agustin Morales
  */
+
 public class ConsultarPrestamos extends javax.swing.JFrame {
 
     private RecursoTecnologico recursoSeleccionado;
@@ -37,80 +38,112 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
      */
     public ConsultarPrestamos() {
         initComponents();
-        jTable1.setDefaultRenderer(
-    Object.class,
-    new javax.swing.table.DefaultTableCellRenderer() {
+        setResizable(false);
+        setLocationRelativeTo(null);
+        
+        javax.swing.table.TableRowSorter<
+        javax.swing.table.TableModel> sorter
+                = new javax.swing.table.TableRowSorter<>(
+                        jTable1.getModel()
+                );
 
-        @Override
-        public java.awt.Component getTableCellRendererComponent(
-                javax.swing.JTable table,
-                Object value,
-                boolean isSelected,
-                boolean hasFocus,
-                int row,
-                int column) {
+        jTable1.setRowSorter(sorter);
 
-            java.awt.Component componente =
-                    super.getTableCellRendererComponent(
-                            table, value, isSelected,
-                            hasFocus, row, column
-                    );
+        chkSoloVencidos.addActionListener(e -> {
 
-            int filaModelo = table.convertRowIndexToModel(row);
+            if (chkSoloVencidos.isSelected()) {
 
-            Object fechaObj = table.getModel()
-                    .getValueAt(filaModelo, 3);
+                sorter.setRowFilter(
+                        new javax.swing.RowFilter<
+                        javax.swing.table.TableModel, Integer>() {
 
-            Object estadoObj = table.getModel()
-                    .getValueAt(filaModelo, 4);
+                    @Override
+                    public boolean include(Entry<
+                            ? extends javax.swing.table.TableModel, ? extends Integer> entry) {
 
-            String fechaTexto = fechaObj == null
-                    ? "" : fechaObj.toString();
-
-            String estado = estadoObj == null
-                    ? "" : estadoObj.toString();
-
-            boolean vencido = false;
-
-            try {
-                java.time.LocalDate fechaPrevista =
-                        java.time.LocalDateTime.parse(
-                                fechaTexto,
-                                java.time.format.DateTimeFormatter
-                                        .ofPattern("dd/MM/yyyy HH:mm")
-                        ).toLocalDate();
-
-                vencido = fechaPrevista.isBefore(
-                        java.time.LocalDate.now()
-                ) && !estado.equalsIgnoreCase("Devuelto");
-
-            } catch (Exception e) {
-                // Si no hay fecha válida, no se marca.
-            }
-
-            if (!isSelected) {
-                if (vencido) {
-                    componente.setBackground(
-                            new java.awt.Color(255, 220, 220)
-                    );
-                    componente.setForeground(
-                            new java.awt.Color(150, 0, 0)
-                    );
-                } else {
-                    componente.setBackground(java.awt.Color.WHITE);
-                    componente.setForeground(java.awt.Color.BLACK);
+                        return esPrestamoVencido(
+                                entry.getModel(),
+                                entry.getIdentifier()
+                        );
+                    }
                 }
+                );
+
+            } else {
+                sorter.setRowFilter(null);
             }
+        });
 
-            return componente;
+        jTable1.setDefaultRenderer(
+                Object.class,
+                new javax.swing.table.DefaultTableCellRenderer() {
+
+            @Override
+            public java.awt.Component getTableCellRendererComponent(
+                    javax.swing.JTable table,
+                    Object value,
+                    boolean isSelected,
+                    boolean hasFocus,
+                    int row,
+                    int column) {
+
+                java.awt.Component componente
+                        = super.getTableCellRendererComponent(
+                                table, value, isSelected,
+                                hasFocus, row, column
+                        );
+
+                int filaModelo = table.convertRowIndexToModel(row);
+
+                Object fechaObj = table.getModel()
+                        .getValueAt(filaModelo, 3);
+
+                Object estadoObj = table.getModel()
+                        .getValueAt(filaModelo, 4);
+
+                String fechaTexto = fechaObj == null
+                        ? "" : fechaObj.toString();
+
+                String estado = estadoObj == null
+                        ? "" : estadoObj.toString();
+
+                boolean vencido = false;
+
+                try {
+                    java.time.LocalDate fechaPrevista
+                            = java.time.LocalDateTime.parse(
+                                    fechaTexto,
+                                    java.time.format.DateTimeFormatter
+                                            .ofPattern("dd/MM/yyyy HH:mm")
+                            ).toLocalDate();
+
+                    vencido = fechaPrevista.isBefore(
+                            java.time.LocalDate.now()
+                    ) && !estado.equalsIgnoreCase("Devuelto");
+
+                } catch (Exception e) {
+                    // Si no hay fecha válida, no se marca.
+                }
+
+                if (!isSelected) {
+                    if (vencido) {
+                        componente.setBackground(
+                                new java.awt.Color(255, 220, 220)
+                        );
+                        componente.setForeground(
+                                new java.awt.Color(150, 0, 0)
+                        );
+                    } else {
+                        componente.setBackground(java.awt.Color.WHITE);
+                        componente.setForeground(java.awt.Color.BLACK);
+                    }
+                }
+
+                return componente;
+            }
         }
-    }
-);
-        
+        );
 
-
-
-        
         jPanel1.setFocusable(true);
         jTextField3.setText(
                 "Ingrese número de préstamo, nombre o documento"
@@ -153,6 +186,7 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
         jComboBox4 = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        chkSoloVencidos = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -237,6 +271,15 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
         jTable1.setShowGrid(true);
         jScrollPane1.setViewportView(jTable1);
 
+        chkSoloVencidos.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        chkSoloVencidos.setForeground(new java.awt.Color(15, 55, 96));
+        chkSoloVencidos.setText("Mostrar solo vencidos");
+        chkSoloVencidos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkSoloVencidosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -248,11 +291,6 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton5))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(141, 141, 141)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(31, 31, 31)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -270,17 +308,32 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(110, 110, 110)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel1))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(chkSoloVencidos)))))))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
-                .addGap(21, 21, 21)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(21, 21, 21))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(chkSoloVencidos)
+                        .addGap(13, 13, 13)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jLabel9))
@@ -318,19 +371,23 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
 
         String filtroEstado = jComboBox4.getSelectedItem().toString();
 
-// Si todavía aparece el texto de ejemplo, buscar todos
+
+        if (chkSoloVencidos.isSelected()) {
+            busqueda = "";
+            filtroEstado = "Vencidos";
+        }
+
         if (busqueda.equalsIgnoreCase(
                 "Ingrese número de préstamo, nombre o documento")) {
             busqueda = "";
         }
 
-// Consultar los préstamos en la base de datos
-        PrestamoDAO prestamoDAO = new PrestamoDAO();
+        
+GestionPrestamo gestionPrestamo = new GestionPrestamo();
 
-        List<Prestamo> prestamos
-                = prestamoDAO.consultarPrestamos(busqueda, filtroEstado);
+List<Prestamo> prestamos =
+        gestionPrestamo.consultarPrestamos(busqueda, filtroEstado);
 
-// Obtener el modelo de la tabla
         javax.swing.table.DefaultTableModel modelo
                 = (javax.swing.table.DefaultTableModel) jTable1.getModel();
 
@@ -431,8 +488,43 @@ public class ConsultarPrestamos extends javax.swing.JFrame {
         }        // TODO add your handling code here:
     }//GEN-LAST:event_jTextField3FocusLost
 
+    private void chkSoloVencidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkSoloVencidosActionPerformed
+
+        jButton2.doClick();
+
+    }//GEN-LAST:event_chkSoloVencidosActionPerformed
+
+    private boolean esPrestamoVencido(
+        javax.swing.table.TableModel modelo,
+        int fila) {
+
+    try {
+        String fechaTexto = modelo.getValueAt(fila, 3).toString();
+        String estado = modelo.getValueAt(fila, 4).toString();
+
+        java.time.LocalDate fechaPrevista
+                = java.time.LocalDateTime.parse(
+                        fechaTexto,
+                        java.time.format.DateTimeFormatter
+                                .ofPattern("dd/MM/yyyy HH:mm")
+                ).toLocalDate();
+
+        return fechaPrevista.isBefore(
+                java.time.LocalDate.now()
+        ) && !estado.equalsIgnoreCase("Devuelto");
+
+    } catch (Exception e) {
+        return false;
+    }
+}
+    public void mostrarSoloVencidos() {
+    chkSoloVencidos.setSelected(true);
+    jButton2.doClick();
+}
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox chkSoloVencidos;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;

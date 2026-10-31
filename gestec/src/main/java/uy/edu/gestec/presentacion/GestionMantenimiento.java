@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package uy.edu.gestec.presentacion;
+
 import uy.edu.gestec.presentacion.RegistrarMantenimiento;
+
 /**
  *
  * @author sseba
@@ -15,13 +17,13 @@ public class GestionMantenimiento extends javax.swing.JFrame {
      */
     public GestionMantenimiento() {
         initComponents();
-         setDefaultCloseOperation(
-        javax.swing.WindowConstants.DISPOSE_ON_CLOSE
-    );
+        setDefaultCloseOperation(
+                javax.swing.WindowConstants.DISPOSE_ON_CLOSE
+        );
+        setResizable(false);
 
-    setLocationRelativeTo(null);
-}
-    
+        setLocationRelativeTo(null);
+    }
 
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -131,30 +133,28 @@ public class GestionMantenimiento extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        PantallaPrincipal ventana = new PantallaPrincipal();
-        ventana.setVisible(true);
         this.dispose();        // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         RegistrarMantenimiento ventana = new RegistrarMantenimiento();
         ventana.setVisible(true);
-                
+
 // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        ConsultarHistorialMantenimientos ventana = new ConsultarHistorialMantenimientos();
+        ventana.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
-RegistrarIncidencia ventana = new RegistrarIncidencia();
-ventana.setVisible(true);
+
+        RegistrarIncidencia ventana = new RegistrarIncidencia();
+        ventana.setVisible(true);
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
-   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

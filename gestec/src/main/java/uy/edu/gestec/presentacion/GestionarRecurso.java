@@ -5,9 +5,7 @@
 package uy.edu.gestec.presentacion;
 
 import uy.edu.gestec.persistencia.PersonaHabilitadaDAO;
-import uy.edu.gestec.negocio.PersonaHabilitada;
 import uy.edu.gestec.negocio.Persona;
-import uy.edu.gestec.persistencia.RecursoTecnologicoDAO;
 import uy.edu.gestec.negocio.RecursoTecnologico;
 import uy.edu.gestec.persistencia.PrestamoDAO;
 import uy.edu.gestec.negocio.Prestamo;
@@ -20,6 +18,7 @@ import uy.edu.gestec.negocio.PersonaHabilitada;
 import uy.edu.gestec.negocio.Usuario;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
+import uy.edu.gestec.negocio.ServicioRecursoTecnologico;
 
 /**
  *
@@ -46,7 +45,7 @@ public class GestionarRecurso extends javax.swing.JFrame {
         jComboBox2.setSelectedIndex(-1);
         jComboBox3.setSelectedIndex(-1);
 
-setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
     }
 
@@ -343,8 +342,9 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
             return;
         }
 
-        RecursoTecnologicoDAO recursoDAO = new RecursoTecnologicoDAO();
-        List<RecursoTecnologico> recursos = recursoDAO.buscarPorNombre(jTextField3.getText());
+        ServicioRecursoTecnologico servicio = new ServicioRecursoTecnologico();
+
+        List<RecursoTecnologico> recursos = servicio.buscarPorNombre(jTextField3.getText());
 
         if (!recursos.isEmpty()) {
             String[] opciones = new String[recursos.size()];
@@ -432,21 +432,29 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
                 false
         );
 
-        RecursoTecnologicoDAO recursoDAO = new RecursoTecnologicoDAO();
+        ServicioRecursoTecnologico servicio
+                = new ServicioRecursoTecnologico();
 
-        boolean agregado = recursoDAO.agregarRecurso(recursoNuevo);
+        String resultado = servicio.agregarRecurso(recursoNuevo);
 
-        if (agregado) {
+        if ("OK".equals(resultado)) {
+
             JOptionPane.showMessageDialog(
                     this,
-                    "Recurso agregado correctamente"
+                    "Recurso agregado correctamente."
             );
+
             limpiarCampos();
+
         } else {
+
             JOptionPane.showMessageDialog(
                     this,
-                    "No se pudo agregar el recurso"
+                    resultado,
+                    "Registro no realizado",
+                    JOptionPane.WARNING_MESSAGE
             );
+
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -502,32 +510,84 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
                 false
         );
 
-        RecursoTecnologicoDAO recursoDAO = new RecursoTecnologicoDAO();
+        ServicioRecursoTecnologico servicio
+                = new ServicioRecursoTecnologico();
 
-        boolean modificado
-                = recursoDAO.modificarRecurso(recursoModificado);
+        String resultado = servicio.modificarRecurso(recursoModificado);
 
-        if (modificado) {
+        if ("OK".equals(resultado)) {
+
             JOptionPane.showMessageDialog(
                     this,
-                    "Recurso modificado correctamente"
+                    "Recurso modificado correctamente."
             );
+
             limpiarCampos();
+
         } else {
+
             JOptionPane.showMessageDialog(
                     this,
-                    "No se pudo modificar el recurso"
+                    resultado,
+                    "Modificación no realizada",
+                    JOptionPane.WARNING_MESSAGE
             );
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
 
-        RecursoTecnologicoDAO recursoDAO = new RecursoTecnologicoDAO();
-        boolean recursoEliminado = recursoDAO.eliminarRecurso(recursoSeleccionado.getIdRecurso());
-        JOptionPane.showMessageDialog(this, "Recurso dado de baja correctamente");
-        limpiarCampos();
+        if (recursoSeleccionado == null) {
 
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Primero debe buscar y seleccionar un recurso.",
+                    "Recurso no seleccionado",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Desea dar de baja el recurso "
+                + recursoSeleccionado.getNombre()
+                + " (Código: "
+                + recursoSeleccionado.getCodigoInv() + ")?",
+                "Confirmar baja",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        ServicioRecursoTecnologico servicio
+                = new ServicioRecursoTecnologico();
+
+        String resultado
+                = servicio.darDeBajaRecurso(recursoSeleccionado);
+
+        if ("OK".equals(resultado)) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Recurso dado de baja correctamente.",
+                    "Baja realizada",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            limpiarCampos();
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    resultado,
+                    "Baja no realizada",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
 
 
     }//GEN-LAST:event_jButton6ActionPerformed
@@ -544,7 +604,6 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         }
     }//GEN-LAST:event_jTextField7KeyTyped
 
-    
     private void limpiarCampos() {
         jTextField3.setText("");
         jTextField4.setText("");
@@ -557,7 +616,6 @@ setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         recursoSeleccionado = null;
     }
 
-    
     /**
      * @param args the command line arguments
      */

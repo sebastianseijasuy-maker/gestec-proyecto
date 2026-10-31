@@ -4,9 +4,10 @@
  */
 package uy.edu.gestec.presentacion;
 
+import java.util.List;
 import javax.swing.JOptionPane;
-
-
+import uy.edu.gestec.negocio.Prestamo;
+import uy.edu.gestec.negocio.GestionPrestamo;
 /**
  *
  * @author sseba
@@ -19,8 +20,45 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     public PantallaPrincipal() {
         initComponents();
         setResizable(false);
-
         setLocationRelativeTo(null);
+
+        // Comprobar vencimientos cuando se abre la ventana
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            verificarPrestamosVencidos();
+        });
+
+    }
+
+    private void verificarPrestamosVencidos() {
+
+
+
+    GestionPrestamo gestion = new GestionPrestamo();
+
+    List<Prestamo> vencidos =
+            gestion.consultarPrestamos("", "Vencidos");
+
+    if (!vencidos.isEmpty()) {
+
+        int opcion = JOptionPane.showConfirmDialog(
+                this,
+                "Hay " + vencidos.size()
+                + " préstamos vencidos pendientes de devolución.\n"
+                + "¿Desea consultarlos ahora?",
+                "Alerta de préstamos vencidos",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (opcion == JOptionPane.YES_OPTION) {
+
+            ConsultarPrestamos ventana =
+                    new ConsultarPrestamos();
+
+            ventana.mostrarSoloVencidos();
+            ventana.setVisible(true);
+        }
+    }
 
     }
 
@@ -171,9 +209,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        
-GestionarPersona ventana = new GestionarPersona();
-ventana.setVisible(true);
+
+        GestionarPersona ventana = new GestionarPersona();
+        ventana.setVisible(true);
 
     }//GEN-LAST:event_jButton4ActionPerformed
 
@@ -183,31 +221,31 @@ ventana.setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-        
-int confirmacion = JOptionPane.showConfirmDialog(
-        this,
-        "¿Está seguro de que desea cerrar la sesión?",
-        "Cerrar sesión",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-);
 
-if (confirmacion != JOptionPane.YES_OPTION) {
-    return;
-}
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Está seguro de que desea cerrar la sesión?",
+                "Cerrar sesión",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
 
 // Crear y mostrar una nueva ventana de Login
-Login login = new Login();
-login.setVisible(true);
+        Login login = new Login();
+        login.setVisible(true);
 
 // Cerrar todas las ventanas de la sesión anterior
-for (java.awt.Window ventana :
-        java.awt.Window.getWindows()) {
+        for (java.awt.Window ventana
+                : java.awt.Window.getWindows()) {
 
-    if (ventana != login) {
-        ventana.dispose();
-    }
-}
+            if (ventana != login) {
+                ventana.dispose();
+            }
+        }
 
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 

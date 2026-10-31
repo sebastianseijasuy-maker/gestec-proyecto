@@ -4,7 +4,7 @@
  */
 package uy.edu.gestec.presentacion;
 
-import uy.edu.gestec.persistencia.PersonaHabilitadaDAO;
+import uy.edu.gestec.negocio.GestionPersonaHabilitada;
 import javax.swing.JOptionPane;
 import uy.edu.gestec.negocio.PersonaHabilitada;
 
@@ -323,214 +323,120 @@ public class GestionarPersona extends javax.swing.JFrame {
 
     private void btnDarBajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDarBajaActionPerformed
         
-if (personaSeleccionada == null) {
-    JOptionPane.showMessageDialog(
+
+
+    if (personaSeleccionada == null) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Primero debe buscar una persona."
+        );
+        return;
+    }
+
+    int confirmacion = JOptionPane.showConfirmDialog(
             this,
-            "Primero debe buscar una persona.",
-            "Persona no seleccionada",
-            JOptionPane.WARNING_MESSAGE
+            "¿Desea dar de baja a la persona "
+            + personaSeleccionada.getNombre() + " "
+            + personaSeleccionada.getApellido() + "?",
+            "Confirmar baja",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
     );
-    return;
-}
 
-// Verificar si la persona ya fue dada de baja
-if (personaSeleccionada.getBajaLogica()) {
-    JOptionPane.showMessageDialog(
-            this,
-            "Esta persona ya se encuentra dada de baja.",
-            "Persona inhabilitada",
-            JOptionPane.WARNING_MESSAGE
+    if (confirmacion != JOptionPane.YES_OPTION) {
+        return;
+    }
+
+    GestionPersonaHabilitada gestion =
+            new GestionPersonaHabilitada();
+
+    String resultado = gestion.darDeBajaPersona(
+            personaSeleccionada,
+            txtDocumento.getText()
     );
-    return;
-}
 
-// Verificar que el documento no haya cambiado
-if (!txtDocumento.getText().trim().equals(
-        personaSeleccionada.getDocumento())) {
+    if ("OK".equals(resultado)) {
 
-    JOptionPane.showMessageDialog(
-            this,
-            "El documento fue modificado. Debe buscar nuevamente a la persona.",
-            "Documento incorrecto",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
+        String mensaje =
+                "Persona encontrada correctamente y dada de baja.\n\n"
+                + "DATOS DE LA PERSONA\n"
+                + "Documento: " + personaSeleccionada.getDocumento() + "\n"
+                + "Nombre: " + personaSeleccionada.getNombre() + "\n"
+                + "Apellido: " + personaSeleccionada.getApellido() + "\n"
+                + "Teléfono: " + personaSeleccionada.getTelefono() + "\n"
+                + "Tipo de persona: " + personaSeleccionada.getTipoPersona();
 
-// Solicitar confirmación antes de dar de baja
-int confirmacion = JOptionPane.showConfirmDialog(
-        this,
-        "¿Desea dar de baja a la persona "
-        + personaSeleccionada.getNombre() + " "
-        + personaSeleccionada.getApellido() + "?",
-        "Confirmar baja",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.QUESTION_MESSAGE
-);
+        limpiarFormulario();
 
-if (confirmacion != JOptionPane.YES_OPTION) {
-    return;
-}
+        JOptionPane.showMessageDialog(
+                this,
+                mensaje,
+                "Baja realizada correctamente",
+                JOptionPane.INFORMATION_MESSAGE
+        );
 
-// Realizar la baja lógica en MySQL
-PersonaHabilitadaDAO personaDAO =
-        new PersonaHabilitadaDAO();
+    } else {
 
-boolean bajaRealizada = personaDAO.darDeBajaPersona(
-        personaSeleccionada.getIdPersonaHab()
-);
+        JOptionPane.showMessageDialog(
+                this,
+                resultado,
+                "Baja no realizada",
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
 
-if (bajaRealizada) {
+    }//GEN-LAST:event_btnDarBajaActionPerformed
 
     
-if (bajaRealizada) {
+private void limpiarFormulario() {
 
-    // Preparar el mensaje con los datos de la persona
-    String mensaje = "Persona encontrada correctamente y dada de baja.\n\n"
-            + "DATOS DE LA PERSONA\n"
-            + "Documento: " + personaSeleccionada.getDocumento() + "\n"
-            + "Nombre: " + personaSeleccionada.getNombre() + "\n"
-            + "Apellido: " + personaSeleccionada.getApellido() + "\n"
-            + "Teléfono: " + personaSeleccionada.getTelefono() + "\n"
-            + "Tipo de persona: " + personaSeleccionada.getTipoPersona();
-
-    // Limpiar todos los campos antes de mostrar el mensaje
     txtDocumento.setText("");
     txtNombre.setText("");
     txtApellido.setText("");
     txtTelefono.setText("");
     txtTipoPersona.setText("");
 
-    // Quitar la persona seleccionada
     personaSeleccionada = null;
 
-    // Mostrar la confirmación y los datos
-    JOptionPane.showMessageDialog(
-            this,
-            mensaje,
-            "Baja realizada correctamente",
-            JOptionPane.INFORMATION_MESSAGE
-    );
-
-    // Colocar el cursor en documento
     txtDocumento.requestFocusInWindow();
-
 }
 
-} else {
-
-    JOptionPane.showMessageDialog(
-            this,
-            "No se pudo dar de baja a la persona.\n"
-            + "Puede tener préstamos pendientes de devolución "
-            + "o haber ocurrido un error en la base de datos.",
-            "Baja no realizada",
-            JOptionPane.WARNING_MESSAGE
-    );
-}
-
-    }//GEN-LAST:event_btnDarBajaActionPerformed
-
+    
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
 
-        String documento = txtDocumento.getText().trim();
-        String nombre = txtNombre.getText().trim();
-        String apellido = txtApellido.getText().trim();
-        String telefono = txtTelefono.getText().trim();
-        String tipoPersona = txtTipoPersona.getText().trim();
+        
+    GestionPersonaHabilitada gestion =
+            new GestionPersonaHabilitada();
 
-// Verificar que todos los campos estén completos
-        if (documento.isEmpty() || nombre.isEmpty()
-                || apellido.isEmpty() || telefono.isEmpty()
-                || tipoPersona.isEmpty()) {
+    String resultado = gestion.registrarPersona(
+            txtDocumento.getText(),
+            txtNombre.getText(),
+            txtApellido.getText(),
+            txtTelefono.getText(),
+            txtTipoPersona.getText()
+    );
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Debe completar todos los campos.",
-                    "Datos incompletos",
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
+    if ("OK".equals(resultado)) {
 
-// Validar que el documento contenga solo números
-        if (!documento.matches("\\d+")) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "El documento debe contener solamente números.",
-                    "Documento inválido",
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
-
-// Validar el tipo de persona: solo letras y espacios
-        if (!tipoPersona.matches("[\\p{L} ]+")) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "El tipo de persona debe contener solamente letras.",
-                    "Dato inválido",
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
-
-// Crear el objeto de persistencia
-        PersonaHabilitadaDAO personaDAO
-                = new PersonaHabilitadaDAO();
-
-// Verificar si la persona ya existe
-        if (personaDAO.buscarPorDocumento(documento) != null) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Ya existe una persona habilitada con ese documento.",
-                    "Documento duplicado",
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
-
-// Registrar en MySQL
-        boolean registrado = personaDAO.registrarPersona(
-                documento,
-                nombre,
-                apellido,
-                telefono,
-                tipoPersona
+        JOptionPane.showMessageDialog(
+                this,
+                "Persona registrada correctamente.",
+                "Registro exitoso",
+                JOptionPane.INFORMATION_MESSAGE
         );
 
-// Comprobar el resultado
-        if (registrado) {
+        limpiarFormulario();
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Persona registrada correctamente.",
-                    "Registro exitoso",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+    } else {
 
-            // Limpiar el formulario
-            txtDocumento.setText("");
-            txtNombre.setText("");
-            txtApellido.setText("");
-            txtTelefono.setText("");
-            txtTipoPersona.setText("");
+        JOptionPane.showMessageDialog(
+                this,
+                resultado,
+                "Registro no realizado",
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
 
-            txtDocumento.requestFocus();
-
-        } else {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "No se pudo registrar la persona. "
-                    + "Verifique los datos o la conexión a MySQL.",
-                    "Error de registro",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
 
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
@@ -558,11 +464,11 @@ if (bajaRealizada) {
         txtTipoPersona.setText("");
 
 // Buscar la persona en MySQL
-        PersonaHabilitadaDAO personaDAO
-                = new PersonaHabilitadaDAO();
+GestionPersonaHabilitada gestionPersona
+        = new GestionPersonaHabilitada();
 
-        PersonaHabilitada persona
-                = personaDAO.buscarPorDocumento(documento);
+PersonaHabilitada persona
+        = gestionPersona.buscarPorDocumento(documento);
 
 // Verificar si existe
         if (persona == null) {
@@ -630,128 +536,64 @@ personaSeleccionada = persona;
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
        
-if (personaSeleccionada == null) {
-    JOptionPane.showMessageDialog(
+
+
+    if (personaSeleccionada == null) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Primero debe buscar una persona."
+        );
+        return;
+    }
+
+    int confirmacion = JOptionPane.showConfirmDialog(
             this,
-            "Primero debe buscar una persona.",
-            "Persona no seleccionada",
-            JOptionPane.WARNING_MESSAGE
+            "¿Desea guardar los cambios de esta persona?",
+            "Confirmar modificación",
+            JOptionPane.YES_NO_OPTION
     );
-    return;
-}
 
-// No permitir modificar personas dadas de baja
-if (personaSeleccionada.getBajaLogica()) {
-    JOptionPane.showMessageDialog(
-            this,
-            "No se puede modificar una persona dada de baja."
+    if (confirmacion != JOptionPane.YES_OPTION) {
+        return;
+    }
+
+    GestionPersonaHabilitada gestion =
+            new GestionPersonaHabilitada();
+
+    String resultado = gestion.modificarPersona(
+            personaSeleccionada,
+            txtDocumento.getText(),
+            txtNombre.getText(),
+            txtApellido.getText(),
+            txtTelefono.getText(),
+            txtTipoPersona.getText()
     );
-    return;
-}
 
-// Obtener los datos del formulario
-String documento = txtDocumento.getText().trim();
-String nombre = txtNombre.getText().trim();
-String apellido = txtApellido.getText().trim();
-String telefono = txtTelefono.getText().trim();
-String tipoPersona = txtTipoPersona.getText().trim();
+    if ("OK".equals(resultado)) {
 
-// Comprobar que el documento no haya cambiado
-if (!documento.equals(personaSeleccionada.getDocumento())) {
-    JOptionPane.showMessageDialog(
-            this,
-            "No se puede cambiar el documento durante la modificación."
-    );
-    return;
-}
+        JOptionPane.showMessageDialog(
+                this,
+                "Persona modificada correctamente.",
+                "Operación exitosa",
+                JOptionPane.INFORMATION_MESSAGE
+        );
 
-// Comprobar campos obligatorios
-if (nombre.isEmpty() || apellido.isEmpty()
-        || telefono.isEmpty() || tipoPersona.isEmpty()) {
+        limpiarFormulario();
 
-    JOptionPane.showMessageDialog(
-            this,
-            "Debe completar todos los campos."
-    );
-    return;
-}
+    } else {
 
-// Validar los caracteres ingresados
-if (!nombre.matches("[\\p{L} ]+")
-        || !apellido.matches("[\\p{L} ]+")
-        || !tipoPersona.matches("[\\p{L} ]+")
-        || !telefono.matches("[0-9]+")) {
+        JOptionPane.showMessageDialog(
+                this,
+                resultado,
+                "Modificación no realizada",
+                JOptionPane.WARNING_MESSAGE
+        );
+    }
 
-    JOptionPane.showMessageDialog(
-            this,
-            "Verifique los datos ingresados."
-    );
-    return;
-}
-
-// Solicitar confirmación
-int confirmacion = JOptionPane.showConfirmDialog(
-        this,
-        "¿Desea guardar los cambios de esta persona?",
-        "Confirmar modificación",
-        JOptionPane.YES_NO_OPTION
-);
-
-if (confirmacion != JOptionPane.YES_OPTION) {
-    return;
-}
-
-// Guardar los cambios en MySQL
-PersonaHabilitadaDAO personaDAO =
-        new PersonaHabilitadaDAO();
-
-boolean modificado = personaDAO.modificarPersona(
-        personaSeleccionada.getIdPersona(),
-        nombre,
-        apellido,
-        telefono,
-        tipoPersona
-);
-
-if (modificado) {
-
-    JOptionPane.showMessageDialog(
-            this,
-            "Persona modificada correctamente.",
-            "Operación exitosa",
-            JOptionPane.INFORMATION_MESSAGE
-    );
- // Limpiar todos los campos
-    txtDocumento.setText("");
-    txtNombre.setText("");
-    txtApellido.setText("");
-    txtTelefono.setText("");
-    txtTipoPersona.setText("");
-
-    // Quitar la persona seleccionada
-    personaSeleccionada = null;
-
-    // Ubicar el cursor en documento
-    txtDocumento.requestFocus();
-    // Actualizar la persona seleccionada
-    personaSeleccionada =
-            personaDAO.buscarPorDocumento(documento);
-
-} else {
-
-    JOptionPane.showMessageDialog(
-            this,
-            "No se pudo modificar la persona.",
-            "Error",
-            JOptionPane.ERROR_MESSAGE
-    );
-}
 
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-        PantallaPrincipal ventana = new PantallaPrincipal();
-        ventana.setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnVolverActionPerformed

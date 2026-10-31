@@ -4,16 +4,15 @@
  */
 package uy.edu.gestec.presentacion;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import uy.edu.gestec.negocio.RecursoTecnologico;
-import uy.edu.gestec.persistencia.RecursoTecnologicoDAO;
+import uy.edu.gestec.negocio.ServicioRecursoTecnologico;
 import uy.edu.gestec.negocio.Mantenimiento;
-import uy.edu.gestec.persistencia.MantenimientoDAO;
+import uy.edu.gestec.negocio.ServicioMantenimiento;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -27,29 +26,26 @@ public class ConsultarHistorialMantenimientos extends javax.swing.JFrame {
      */
     public ConsultarHistorialMantenimientos() {
         initComponents();
-        
-tablaRecursos.setSelectionMode(
-        ListSelectionModel.SINGLE_SELECTION
-);
 
-tablaRecursos.setDefaultEditor(Object.class, null);
-tablaHistorial.setDefaultEditor(Object.class, null);
+        tablaRecursos.setSelectionMode(
+                ListSelectionModel.SINGLE_SELECTION
+        );
 
-        
-    setTitle("GESTEC - Historial de mantenimientos");
-    setLocationRelativeTo(null);
+        tablaRecursos.setDefaultEditor(Object.class, null);
+        tablaHistorial.setDefaultEditor(Object.class, null);
 
-    setDefaultCloseOperation(
-        javax.swing.WindowConstants.DISPOSE_ON_CLOSE
-    );
-}
+        setTitle("GESTEC - Historial de mantenimientos");
+        setResizable(false);
+        setLocationRelativeTo(null);
 
-private final List<RecursoTecnologico> recursosEncontrados
-        = new ArrayList<>();
+        setDefaultCloseOperation(
+                javax.swing.WindowConstants.DISPOSE_ON_CLOSE
+        );
+    }
 
-   
+    private final List<RecursoTecnologico> recursosEncontrados
+            = new ArrayList<>();
 
-   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -66,14 +62,21 @@ private final List<RecursoTecnologico> recursosEncontrados
         btnVolver = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        lblTitulo.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        lblTitulo.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        lblTitulo.setForeground(new java.awt.Color(12, 55, 96));
         lblTitulo.setText("Historial de mantenimiento");
 
+        lblBuscar.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        lblBuscar.setForeground(new java.awt.Color(12, 55, 96));
         lblBuscar.setText("\tBuscar recurso");
 
+        btnBuscar.setBackground(new java.awt.Color(15, 126, 190));
+        btnBuscar.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
         btnBuscar.setText("Buscar");
         btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -81,6 +84,8 @@ private final List<RecursoTecnologico> recursosEncontrados
             }
         });
 
+        btnConsultar.setBackground(new java.awt.Color(15, 126, 190));
+        btnConsultar.setForeground(new java.awt.Color(255, 255, 255));
         btnConsultar.setText("Consultar Historial");
         btnConsultar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -88,6 +93,7 @@ private final List<RecursoTecnologico> recursosEncontrados
             }
         });
 
+        tablaHistorial.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         tablaHistorial.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
@@ -101,6 +107,7 @@ private final List<RecursoTecnologico> recursosEncontrados
         ));
         jScrollPane1.setViewportView(tablaHistorial);
 
+        tablaRecursos.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         tablaRecursos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
@@ -114,6 +121,9 @@ private final List<RecursoTecnologico> recursosEncontrados
         ));
         jScrollPane2.setViewportView(tablaRecursos);
 
+        btnVolver.setBackground(new java.awt.Color(15, 126, 190));
+        btnVolver.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        btnVolver.setForeground(new java.awt.Color(255, 255, 255));
         btnVolver.setText("Volver");
         btnVolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -121,45 +131,56 @@ private final List<RecursoTecnologico> recursosEncontrados
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(12, 55, 96));
         jLabel1.setText("Selleccione recurso");
 
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(12, 55, 96));
         jLabel2.setText("Mantenimientos realizados");
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Captura de pantalla 2026-09-23 081438.png"))); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(216, 216, 216)
-                .addComponent(lblTitulo)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(lblBuscar, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 128, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                                .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btnConsultar, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(btnVolver, javax.swing.GroupLayout.Alignment.TRAILING))))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(74, 74, 74)
+                                        .addComponent(btnVolver))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnConsultar))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGap(108, 108, 108)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lblTitulo)
+                                .addGap(0, 110, Short.MAX_VALUE)))
                         .addGap(15, 15, 15))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblBuscar)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -167,23 +188,22 @@ private final List<RecursoTecnologico> recursosEncontrados
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(17, 17, 17)
-                        .addComponent(lblTitulo))
+                        .addComponent(jLabel3))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(50, 50, 50)
-                        .addComponent(lblBuscar)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(27, 27, 27)
+                        .addComponent(lblTitulo)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)
+                .addComponent(lblBuscar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBuscar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGap(25, 25, 25)
                 .addComponent(jLabel1)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(38, 38, 38)
-                        .addComponent(btnConsultar))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnConsultar))
                 .addGap(27, 27, 27)
                 .addComponent(jLabel2)
                 .addGap(6, 6, 6)
@@ -197,148 +217,141 @@ private final List<RecursoTecnologico> recursosEncontrados
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
-        
-int filaSeleccionada = tablaRecursos.getSelectedRow();
+
+        int filaSeleccionada = tablaRecursos.getSelectedRow();
 
 // Verificar que se haya seleccionado un recurso
-if (filaSeleccionada == -1) {
+        if (filaSeleccionada == -1) {
 
-    JOptionPane.showMessageDialog(
-            this,
-            "Debe seleccionar un recurso de la tabla.",
-            "Dato requerido",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debe seleccionar un recurso de la tabla.",
+                    "Dato requerido",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
 
-// Obtener la fila correspondiente del modelo
-int filaModelo = tablaRecursos.convertRowIndexToModel(
-        filaSeleccionada
-);
+        int filaModelo = tablaRecursos.convertRowIndexToModel(
+                filaSeleccionada
+        );
 
-// Obtener el recurso seleccionado
-RecursoTecnologico recurso =
-        recursosEncontrados.get(filaModelo);
+        RecursoTecnologico recurso
+                = recursosEncontrados.get(filaModelo);
 
-// Consultar sus mantenimientos
-MantenimientoDAO dao = new MantenimientoDAO();
+        ServicioMantenimiento gestion = new ServicioMantenimiento();
 
-List<Mantenimiento> mantenimientos =
-        dao.consultarPorRecurso(recurso.getIdRecurso());
+        List<Mantenimiento> mantenimientos
+                = gestion.consultarPorRecurso(recurso.getIdRecurso());
 
-// Limpiar la tabla del historial
-DefaultTableModel modelo =
-        (DefaultTableModel) tablaHistorial.getModel();
+        DefaultTableModel modelo
+                = (DefaultTableModel) tablaHistorial.getModel();
 
-modelo.setRowCount(0);
+        modelo.setRowCount(0);
 
-// Formato de fecha y hora
-DateTimeFormatter formatoFecha =
-        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formatoFecha
+                = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-// Mostrar los mantenimientos encontrados
-for (Mantenimiento mantenimiento : mantenimientos) {
+        for (Mantenimiento mantenimiento : mantenimientos) {
 
-    modelo.addRow(new Object[]{
-        mantenimiento.getIdMantenimiento(),
-        mantenimiento.getFechaInicio().format(formatoFecha),
-        mantenimiento.getDetalletecnico()
-    });
-}
+            modelo.addRow(new Object[]{
+                mantenimiento.getIdMantenimiento(),
+                mantenimiento.getFechaInicio().format(formatoFecha),
+                mantenimiento.getDetalletecnico()
+            });
+        }
 
-// Informar si no existen mantenimientos
-if (mantenimientos.isEmpty()) {
+        if (mantenimientos.isEmpty()) {
 
-    JOptionPane.showMessageDialog(
-            this,
-            "No se encontraron mantenimientos registrados "
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se encontraron mantenimientos registrados "
                     + "para el recurso seleccionado.",
-            "Sin resultados",
-            JOptionPane.INFORMATION_MESSAGE
-    );
-}
+                    "Sin resultados",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        }
 
     }//GEN-LAST:event_btnConsultarActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        
-String busqueda = txtBuscar.getText().trim();
+
+        String busqueda = txtBuscar.getText().trim();
 
 // Validar que se ingrese un dato
-if (busqueda.isEmpty()) {
-    JOptionPane.showMessageDialog(
-            this,
-            "Ingrese el nombre o código del recurso.",
-            "Dato requerido",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
+        if (busqueda.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Ingrese el nombre o código del recurso.",
+                    "Dato requerido",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
 
 // Limpiar resultados anteriores
-recursosEncontrados.clear();
+        recursosEncontrados.clear();
 
-DefaultTableModel modelo =
-        (DefaultTableModel) tablaRecursos.getModel();
+        DefaultTableModel modelo
+                = (DefaultTableModel) tablaRecursos.getModel();
 
-modelo.setRowCount(0);
+        modelo.setRowCount(0);
 
 // Limpiar también el historial anterior
-DefaultTableModel modeloHistorial =
-        (DefaultTableModel) tablaHistorial.getModel();
+        DefaultTableModel modeloHistorial
+                = (DefaultTableModel) tablaHistorial.getModel();
 
-modeloHistorial.setRowCount(0);
+        modeloHistorial.setRowCount(0);
 
 // Consultar los recursos en MySQL
-RecursoTecnologicoDAO dao =
-        new RecursoTecnologicoDAO();
+ServicioRecursoTecnologico servicio
+        = new ServicioRecursoTecnologico();
 
-try {
+        try {
 
-    List<RecursoTecnologico> recursos =
-            dao.buscarParaMantenimiento(busqueda);
+            List<RecursoTecnologico> recursos
+                    = servicio.buscarParaMantenimiento(busqueda);
 
-    recursosEncontrados.addAll(recursos);
+            recursosEncontrados.addAll(recursos);
 
-    for (RecursoTecnologico recurso : recursos) {
+            for (RecursoTecnologico recurso : recursos) {
 
-        modelo.addRow(new Object[]{
-            recurso.getCodigoInv(),
-            recurso.getNombre(),
-            recurso.getCondicion()
-        });
-    }
+                modelo.addRow(new Object[]{
+                    recurso.getCodigoInv(),
+                    recurso.getNombre(),
+                    recurso.getCondicion()
+                });
+            }
 
-    if (recursos.isEmpty()) {
+            if (recursos.isEmpty()) {
 
-        JOptionPane.showMessageDialog(
-                this,
-                "No se encontraron recursos.",
-                "Sin resultados",
-                JOptionPane.INFORMATION_MESSAGE
-        );
-    }
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No se encontraron recursos.",
+                        "Sin resultados",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
 
-} catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
 
-    JOptionPane.showMessageDialog(
-            this,
-            "No se pudo realizar la búsqueda de recursos.",
-            "Error",
-            JOptionPane.ERROR_MESSAGE
-    );
-}
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se pudo realizar la búsqueda de recursos.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
 
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
-       
-this.dispose();
+        GestionMantenimiento ventana = new GestionMantenimiento();
+        ventana.setVisible(true);
+        this.dispose();
 
     }//GEN-LAST:event_btnVolverActionPerformed
 
-    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -377,6 +390,7 @@ this.dispose();
     private javax.swing.JButton btnVolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblBuscar;

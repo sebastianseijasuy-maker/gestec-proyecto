@@ -4,12 +4,10 @@
  */
 package uy.edu.gestec.presentacion;
 
-import uy.edu.gestec.persistencia.PersonaHabilitadaDAO;
-import uy.edu.gestec.negocio.PersonaHabilitada;
 import uy.edu.gestec.negocio.Persona;
-import uy.edu.gestec.persistencia.RecursoTecnologicoDAO;
 import uy.edu.gestec.negocio.RecursoTecnologico;
-import uy.edu.gestec.persistencia.PrestamoDAO;
+import uy.edu.gestec.negocio.GestionPersonaHabilitada;
+import uy.edu.gestec.negocio.ServicioRecursoTecnologico;
 import uy.edu.gestec.negocio.Prestamo;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -38,6 +36,8 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
     public RegistrarPrestamo() {
         initComponents();
         setResizable(false);
+
+        setLocationRelativeTo(null);
         setTitle("GESTEC - Registrar préstamo");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -368,76 +368,75 @@ public class RegistrarPrestamo extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-      
-String documento = jTextField1.getText().trim();
+        String documento = jTextField1.getText().trim();
 
 // Quitar cualquier persona seleccionada anteriormente
-personaSeleccionada = null;
-jTextField2.setText("");
+        personaSeleccionada = null;
+        jTextField2.setText("");
 
 // Validar documento
-if (documento.isEmpty()) {
-    JOptionPane.showMessageDialog(
-            this,
-            "Debe ingresar un documento.",
-            "Dato requerido",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
+        if (documento.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debe ingresar un documento.",
+                    "Dato requerido",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
 
 // Buscar persona en MySQL
-PersonaHabilitadaDAO personaDAO =
-        new PersonaHabilitadaDAO();
+        GestionPersonaHabilitada gestion
+                = new GestionPersonaHabilitada();
 
-PersonaHabilitada persona =
-        personaDAO.buscarPorDocumento(documento);
+        PersonaHabilitada persona
+                = gestion.buscarPorDocumento(documento);
 
 // Verificar si existe
-if (persona == null) {
-    JOptionPane.showMessageDialog(
-            this,
-            "No se encontró una persona con ese documento.",
-            "Persona no encontrada",
-            JOptionPane.WARNING_MESSAGE
-    );
-    return;
-}
+        if (persona == null) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se encontró una persona con ese documento.",
+                    "Persona no encontrada",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
 
 // Verificar si está dada de baja
-if (persona.getBajaLogica()) {
+        if (persona.getBajaLogica()) {
 
-    // Preparar mensaje con todos los datos
-    String mensaje = "La persona fue encontrada, pero está INHABILITADA.\n"
-            + "No puede recibir nuevos préstamos.\n\n"
-            + "DATOS DE LA PERSONA\n"
-            + "Documento: " + persona.getDocumento() + "\n"
-            + "Nombre: " + persona.getNombre() + "\n"
-            + "Apellido: " + persona.getApellido() + "\n"
-            + "Teléfono: " + persona.getTelefono() + "\n"
-            + "Tipo de persona: " + persona.getTipoPersona();
+            // Preparar mensaje con todos los datos
+            String mensaje = "La persona fue encontrada, pero está INHABILITADA.\n"
+                    + "No puede recibir nuevos préstamos.\n\n"
+                    + "DATOS DE LA PERSONA\n"
+                    + "Documento: " + persona.getDocumento() + "\n"
+                    + "Nombre: " + persona.getNombre() + "\n"
+                    + "Apellido: " + persona.getApellido() + "\n"
+                    + "Teléfono: " + persona.getTelefono() + "\n"
+                    + "Tipo de persona: " + persona.getTipoPersona();
 
-    // Limpiar completamente el formulario
-    limpiarFormulario();
+            // Limpiar completamente el formulario
+            limpiarFormulario();
 
-    // Mostrar los datos en el cuadro de diálogo
-    JOptionPane.showMessageDialog(
-            this,
-            mensaje,
-            "Persona inhabilitada",
-            JOptionPane.WARNING_MESSAGE
-    );
+            // Mostrar los datos en el cuadro de diálogo
+            JOptionPane.showMessageDialog(
+                    this,
+                    mensaje,
+                    "Persona inhabilitada",
+                    JOptionPane.WARNING_MESSAGE
+            );
 
-    return;
-}
+            return;
+        }
 
 // Si está habilitada, permitir seleccionarla
-personaSeleccionada = persona;
+        personaSeleccionada = persona;
 
-jTextField2.setText(
-        persona.getNombre() + " "
-        + persona.getApellido()
-);
+        jTextField2.setText(
+                persona.getNombre() + " "
+                + persona.getApellido()
+        );
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -453,8 +452,8 @@ jTextField2.setText(
             return;
         }
 
-        RecursoTecnologicoDAO recursoDAO = new RecursoTecnologicoDAO();
-        List<RecursoTecnologico> recursos = recursoDAO.buscarDisponiblesPorNombre(jTextField3.getText());
+        ServicioRecursoTecnologico recursoD = new ServicioRecursoTecnologico();
+        List<RecursoTecnologico> recursos = recursoD.buscarDisponiblesPorNombre(jTextField3.getText());
 
         if (!recursos.isEmpty()) {
             String[] opciones = new String[recursos.size()];
@@ -500,35 +499,35 @@ jTextField2.setText(
             return;
         }
 
-if (personaSeleccionada.getBajaLogica()) {
+        if (personaSeleccionada.getBajaLogica()) {
 
-    String mensaje = "La persona encontrada está dada de baja.\n"
-            + "No puede recibir nuevos préstamos.\n\n"
-            + "DATOS DE LA PERSONA\n"
-            + "Documento: " + personaSeleccionada.getDocumento() + "\n"
-            + "Nombre: " + personaSeleccionada.getNombre() + "\n"
-            + "Apellido: " + personaSeleccionada.getApellido() + "\n"
-            + "Teléfono: " + personaSeleccionada.getTelefono() + "\n"
-            + "Tipo de persona: " + personaSeleccionada.getTipoPersona();
+            String mensaje = "La persona encontrada está dada de baja.\n"
+                    + "No puede recibir nuevos préstamos.\n\n"
+                    + "DATOS DE LA PERSONA\n"
+                    + "Documento: " + personaSeleccionada.getDocumento() + "\n"
+                    + "Nombre: " + personaSeleccionada.getNombre() + "\n"
+                    + "Apellido: " + personaSeleccionada.getApellido() + "\n"
+                    + "Teléfono: " + personaSeleccionada.getTelefono() + "\n"
+                    + "Tipo de persona: " + personaSeleccionada.getTipoPersona();
 
-    // Limpiar los campos
-    jTextField1.setText("");
-    jTextField2.setText("");
+            // Limpiar los campos
+            jTextField1.setText("");
+            jTextField2.setText("");
 
-    // Quitar la persona seleccionada
-    personaSeleccionada = null;
+            // Quitar la persona seleccionada
+            personaSeleccionada = null;
 
-    JOptionPane.showMessageDialog(
-            this,
-            mensaje,
-            "Persona inhabilitada",
-            JOptionPane.WARNING_MESSAGE
-    );
+            JOptionPane.showMessageDialog(
+                    this,
+                    mensaje,
+                    "Persona inhabilitada",
+                    JOptionPane.WARNING_MESSAGE
+            );
 
-    jTextField1.requestFocusInWindow();
+            jTextField1.requestFocusInWindow();
 
-    return;
-}
+            return;
+        }
 
         if (recursosSeleccionados == null || recursosSeleccionados.isEmpty()) {
             JOptionPane.showMessageDialog(
@@ -600,34 +599,6 @@ if (personaSeleccionada.getBajaLogica()) {
                     recurso.getIdRecurso() + " - " + recurso.getNombre()
             );
         }
-
-// Comprobar nuevamente que la persona esté habilitada
-PersonaHabilitadaDAO personaDAO =
-        new PersonaHabilitadaDAO();
-
-PersonaHabilitada personaActual =
-        personaDAO.buscarPorDocumento(
-                personaSeleccionada.getDocumento()
-        );
-
-if (personaActual == null || personaActual.getBajaLogica()) {
-
-    limpiarFormulario();
-
-    JOptionPane.showMessageDialog(
-            this,
-            "No se puede registrar el préstamo.\n"
-            + "La persona ya no está habilitada "
-            + "o no se pudo verificar su estado.",
-            "Préstamo no permitido",
-            JOptionPane.WARNING_MESSAGE
-    );
-
-    return;
-}
-
-// Utilizar los datos actualizados
-personaSeleccionada = personaActual;
 
         Prestamo prestamo = new Prestamo(
                 LocalDateTime.now(),

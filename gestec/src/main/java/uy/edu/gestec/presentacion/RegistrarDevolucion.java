@@ -6,7 +6,7 @@ package uy.edu.gestec.presentacion;
 
 import uy.edu.gestec.negocio.Prestamo;
 import uy.edu.gestec.negocio.RecursoTecnologico;
-import uy.edu.gestec.persistencia.PrestamoDAO;
+import uy.edu.gestec.negocio.GestionPrestamo;
 import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +24,9 @@ public class RegistrarDevolucion extends javax.swing.JFrame {
      */
     public RegistrarDevolucion() {
         initComponents();
+        btnConfirmarDevolucion.setEnabled(false);
+        setResizable(false);
+        setLocationRelativeTo(null);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -39,9 +42,10 @@ public RegistrarDevolucion(int idPrestamo) {
 
 private void cargarPrestamo(int idPrestamo) {
 
-    PrestamoDAO dao = new PrestamoDAO();
+    GestionPrestamo gestion = new GestionPrestamo();
 
-    prestamoSeleccionado = dao.buscarPrestamoPendientePorId(idPrestamo);
+prestamoSeleccionado =
+        gestion.buscarPrestamoPendientePorId(idPrestamo);
 
     if (prestamoSeleccionado == null) {
         JOptionPane.showMessageDialog(
@@ -307,12 +311,12 @@ private void cargarPrestamo(int idPrestamo) {
         }
 
 // Registrar devolución en la base de datos
-        PrestamoDAO prestamoDAO = new PrestamoDAO();
+        GestionPrestamo gestion = new GestionPrestamo();
 
-        boolean devolucionRegistrada
-                = prestamoDAO.registrarDevolucion(
-                        prestamoSeleccionado.getIdPrestamo()
-                );
+boolean devolucionRegistrada =
+        gestion.registrarDevolucion(
+                prestamoSeleccionado.getIdPrestamo()
+        );
 
         if (devolucionRegistrada) {
 
