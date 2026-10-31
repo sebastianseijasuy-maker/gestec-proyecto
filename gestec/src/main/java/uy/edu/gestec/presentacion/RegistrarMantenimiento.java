@@ -13,6 +13,7 @@ import uy.edu.gestec.persistencia.RecursoTecnologicoDAO;
 import java.util.ArrayList;
 import java.util.List;
 import uy.edu.gestec.persistencia.MantenimientoDAO;
+import uy.edu.gestec.presentacion.GestionMantenimiento;
 
 /**
  *
@@ -104,6 +105,11 @@ public class RegistrarMantenimiento extends javax.swing.JFrame {
         jButton2.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Volver");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setBackground(new java.awt.Color(15, 126, 190));
         jButton3.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
@@ -314,6 +320,13 @@ boolean registrado = dao.registrarMantenimiento(
         }
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        GestionMantenimiento ventana = new GestionMantenimiento();
+        ventana.setVisible(true);
+        this.dispose();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
