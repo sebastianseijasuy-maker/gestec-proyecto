@@ -1,8 +1,6 @@
 # GesTec – Sistema de Gestión de Recursos Tecnológicos
 
-GesTec es un sistema destinado a la gestión de recursos tecnológicos en
-instituciones educativas, permitiendo administrar los recursos y las
-operaciones asociadas a su préstamo.
+GesTec es un sistema de escritorio desarrollado en Java, destinado a la gestión de recursos tecnológicos en instituciones educativas. Permite administrar el inventario, las personas habilitadas, los préstamos y devoluciones, las incidencias, los mantenimientos y los usuarios responsables de la gestión.
 
 ## Integrantes
 
@@ -13,7 +11,7 @@ operaciones asociadas a su préstamo.
 
 - Java JDK 22
 - Apache NetBeans 21
-- Maven
+- Maven (verificar según la configuración del proyecto)
 - MySQL Server
 - MySQL Workbench
 - JDBC (MySQL Connector/J)
@@ -22,79 +20,115 @@ operaciones asociadas a su préstamo.
 
 1. Iniciar MySQL Server.
 2. Abrir MySQL Workbench.
-3. Ejecutar los scripts SQL incluidos en la carpeta `database`.
-4. Los scripts permiten crear la base de datos `gestec`, sus tablas,
-   relaciones y datos ficticios necesarios para realizar las pruebas.
+3. Ejecutar el script `01_crear_bd.sql`, ubicado en la carpeta `database`, para crear la base de datos `gestec` y sus tablas.
+4. Ejecutar el script `02_datos_prueba.sql` para incorporar los datos ficticios necesarios para las pruebas.
+5. Verificar que la base de datos se haya creado correctamente.
 
 ## Configuración de la conexión
 
-La conexión con la base de datos se realiza mediante JDBC.
+La comunicación entre la aplicación y MySQL se realiza mediante JDBC.
 
-Antes de ejecutar la aplicación, verificar en la clase `ConexionBD`
-los datos correspondientes a:
+Antes de ejecutar GesTec, verificar en la clase `ConexionBD` los siguientes parámetros:
 
-- URL de conexión.
+- URL de conexión a la base de datos `gestec`.
 - Usuario de MySQL.
 - Contraseña de MySQL.
 
-Estos valores deberán ajustarse de acuerdo con la configuración local
-de MySQL del equipo donde se ejecute la aplicación.
+Estos valores deberán ajustarse a la configuración local del equipo donde se ejecute la aplicación.
 
-## Ejecución
+## Ejecución del sistema
 
-1. Abrir Apache NetBeans.
-2. Abrir el proyecto ubicado en la carpeta `gestec`.
-3. Verificar que MySQL Server se encuentre en ejecución.
-4. Verificar la configuración de la conexión a la base de datos.
-5. Ejecutar la aplicación desde NetBeans.
-6. Se mostrará la pantalla principal de GesTec.
+1. Clonar o descargar el repositorio.
+2. Abrir Apache NetBeans.
+3. Abrir el proyecto ubicado en la carpeta `gestec`.
+4. Verificar que se encuentre configurado el JDK y disponible el controlador JDBC.
+5. Iniciar MySQL Server y comprobar la conexión con la base de datos.
+6. Ejecutar la aplicación desde NetBeans.
+7. Ingresar las credenciales de un usuario autorizado en la pantalla de inicio de sesión.
+8. Acceder a las funcionalidades desde la pantalla principal de GesTec.
 
-## Recorrido funcional implementado
+## Funcionalidades implementadas
 
-El recorrido funcional seleccionado corresponde al registro de un préstamo.
+### Gestión de recursos tecnológicos
 
-Para reproducirlo:
-
-1. Ingresar a la opción `Préstamo` desde la pantalla principal.
-2. Buscar una persona habilitada mediante su documento.
-3. Buscar y seleccionar un recurso tecnológico disponible.
-4. Ingresar la fecha prevista de devolución.
-5. Registrar el préstamo.
-6. El sistema almacena el préstamo en la base de datos y actualiza
-   la disponibilidad del recurso.
-
-## CRUD de recursos tecnológicos
-
-Desde la opción `Recursos` se encuentra implementado el CRUD de
-Recurso Tecnológico, que permite:
-
-- Registrar un nuevo recurso.
+- Registrar nuevos recursos.
 - Consultar recursos por nombre.
-- Modificar los datos de un recurso.
-- Realizar la baja lógica de un recurso.
+- Modificar información de recursos.
+- Realizar bajas lógicas.
+- Consultar su condición y disponibilidad.
 
-Las operaciones se realizan mediante la interfaz gráfica y persisten
-los cambios en la base de datos.
+La consulta de recursos presenta una implementación parcial respecto del requisito original, debido a que no incorpora el historial de modificaciones.
 
-## Pruebas
+### Gestión de personas habilitadas
 
-Se realizaron casos de prueba sobre las funcionalidades implementadas,
-incluyendo el alta, consulta, modificación y baja lógica de recursos
-tecnológicos.
+- Registrar personas.
+- Consultar personas por documento.
+- Modificar sus datos.
+- Realizar bajas lógicas.
 
-Los resultados de las pruebas y su vinculación con los requisitos
-se encuentran documentados en la documentación correspondiente a
-la tercera entrega.
+### Gestión de préstamos y devoluciones
+
+- Registrar préstamos a personas habilitadas.
+- Seleccionar recursos disponibles.
+- Establecer fechas previstas de devolución.
+- Consultar préstamos registrados.
+- Registrar devoluciones.
+- Identificar préstamos vencidos.
+
+### Gestión de incidencias y mantenimientos
+
+- Registrar incidencias asociadas a recursos tecnológicos.
+- Registrar mantenimientos.
+- Consultar información de mantenimientos registrados.
+
+### Gestión de usuarios
+
+- Autenticación mediante credenciales.
+- Cierre de sesión.
+- Registro de usuarios POITE.
+
+## Recorrido funcional: registro de préstamo
+
+Para comprobar una de las principales funcionalidades del sistema:
+
+1. Iniciar sesión con un usuario autorizado.
+2. Seleccionar la opción `Préstamo` desde la pantalla principal.
+3. Ingresar a `Registrar préstamo`.
+4. Buscar una persona habilitada mediante su documento.
+5. Buscar y seleccionar un recurso tecnológico disponible.
+6. Ingresar una fecha prevista de devolución válida.
+7. Confirmar el registro.
+8. Verificar que el préstamo se haya registrado y que se haya actualizado la disponibilidad del recurso.
+
+## Pruebas realizadas
+
+Se ejecutaron 17 casos de prueba vinculados con los requisitos funcionales implementados.
+
+Las verificaciones comprendieron la gestión de recursos tecnológicos, personas habilitadas, préstamos, devoluciones, incidencias, mantenimientos, autenticación, cierre de sesión y registro de usuarios.
+
+Los 17 casos finalizaron satisfactoriamente.
+
+Durante las pruebas se detectó una incompatibilidad entre las opciones de tipo de incidencia de la interfaz y una restricción de la base de datos. El problema fue corregido y la prueba correspondiente se ejecutó nuevamente con resultado satisfactorio.
+
+Los resultados detallados se encuentran documentados en el plan de pruebas de la entrega final.
+
+## Alcance y limitaciones
+
+Permanecen pendientes las funcionalidades correspondientes a reservas, retiro y reincorporación de recursos y generación de reportes.
+
+Las funcionalidades de gestión de kits fueron retiradas del alcance de esta entrega.
 
 ## Estructura general
 
-El sistema está organizado mediante una arquitectura en capas:
+GesTec se organiza mediante una arquitectura en capas:
 
-- Presentación: interfaces gráficas desarrolladas con Java Swing.
-- Negocio: clases que representan las entidades del dominio.
-- Persistencia: clases DAO responsables del acceso a los datos mediante JDBC.
-- Base de datos: MySQL Server.
+- **Presentación:** interfaces gráficas desarrolladas con Java Swing.
+- **Negocio:** entidades del dominio, servicios, clases de gestión y validaciones de las operaciones.
+- **Persistencia:** clases DAO responsables del acceso a los datos mediante JDBC.
+- **Base de datos:** MySQL, donde se almacenan los registros y se aplican las restricciones de integridad.
 
-La documentación y los artefactos de diseño se encuentran en la
-carpeta `docs`, mientras que los scripts de base de datos se encuentran
-en la carpeta `database`.
+La documentación y los artefactos de diseño se encuentran en la carpeta `docs`, mientras que los scripts de base de datos se encuentran en `database`.
+
+## Control de versiones
+
+El desarrollo se administra
