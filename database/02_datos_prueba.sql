@@ -1,51 +1,70 @@
-use gestec;
+USE gestec;
 
-INSERT INTO persona (documento, nombre, apellido, telefono)
-VALUES 	
-	('41231235', 'Sebastian', 'Seijas', '091007177'),
-	('41243244', 'Agustin', 'Morales', '098675456'),
-	('34345677', 'Ana', 'Martinez', '098789564'),
-    ('52643245', 'Carlos', 'Perez','');
-    
-select * from persona;
-    
-update persona
-set documento = '43373355'
-where id_persona = 1;
 
-update persona
-set documento = '11111111'
-where id_persona = 3;
-
-update persona
-set documento = '22222222'
-where id_persona = 4;
-   
-    
-INSERT INTO usuario (id_persona, nombre_usuario, password_hash)
+INSERT INTO persona
+(documento, nombre, apellido, telefono)
 VALUES
-	(1, 'sseba', 'clave de prueba'),
-    (2, 'agustinm', 'clave de prueba');
-       
-INSERT INTO persona_habilitada (id_persona, tipo_persona, baja_logica)
-VALUES
-	(3, 'Docente', 0),
-    (4, 'Funcionario', 0);
-    
-INSERT INTO recurso_tecnologico(codigo_inv, nombre, categoria, condicion, disponibilidad, baja_logica)
-VALUES 
-	('001', 'notebook electra', 'notebook', 'operativo', 1, 0),
-    ('002', 'mouse hp', 'perifericos', 'operativo', 1, 0),
-    ('003', 'hdmi 3m', 'accesorios', 'operativo', 1, 0);
-    
-    
+    ('43373355', 'Sebastian', 'Seijas', '091007177'),
+    ('41243244', 'Agustin', 'Morales', '098675456'),
+    ('11111111', 'Ana', 'Martinez', '098789564'),
+    ('22222222', 'Carlos', 'Perez', '');
+
+INSERT INTO persona_habilitada
+(id_persona, tipo_persona, baja_logica)
+SELECT
+    id_persona,
+    'Docente',
+    FALSE
+FROM persona
+WHERE documento = '11111111';
+
+INSERT INTO persona_habilitada
+(id_persona, tipo_persona, baja_logica)
+SELECT
+    id_persona,
+    'Funcionario',
+    FALSE
+FROM persona
+WHERE documento = '22222222';
+
 INSERT INTO recurso_tecnologico
-(codigo_inv, nombre, categoria, condicion, disponibilidad, baja_logica)
+(codigo_inv, nombre, categoria, condicion,
+ disponibilidad, baja_logica)
 VALUES
-('004', 'notebook electra', 'notebook', 'Operativo', TRUE, FALSE),
-('005', 'notebook electra', 'notebook', 'Operativo', TRUE, FALSE),
-('006', 'notebook sirio', 'notebook', 'Operativo', TRUE, FALSE), 
-('007', 'notebook sirio', 'notebook', 'Operativo', TRUE, FALSE),
-('008', 'mouse Logitech', 'perifericos', 'Operativo', TRUE, FALSE);
+    ('001', 'notebook electra', 'notebook',
+     'Operativo', TRUE, FALSE),
 
+    ('002', 'mouse hp', 'perifericos',
+     'Operativo', TRUE, FALSE),
 
+    ('003', 'hdmi 3m', 'accesorios',
+     'Operativo', TRUE, FALSE),
+
+    ('004', 'notebook electra', 'notebook',
+     'Operativo', TRUE, FALSE),
+
+    ('005', 'notebook electra', 'notebook',
+     'Operativo', TRUE, FALSE),
+
+    ('006', 'notebook sirio', 'notebook',
+     'Operativo', TRUE, FALSE),
+
+    ('007', 'notebook sirio', 'notebook',
+     'Operativo', TRUE, FALSE),
+
+    ('008', 'mouse Logitech', 'perifericos',
+     'Operativo', TRUE, FALSE);
+
+SELECT * FROM persona;
+
+SELECT
+    p.documento,
+    p.nombre,
+    p.apellido,
+    ph.tipo_persona,
+    ph.baja_logica
+FROM persona_habilitada ph
+INNER JOIN persona p
+    ON ph.id_persona = p.id_persona;
+
+SELECT * FROM recurso_tecnologico;

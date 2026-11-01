@@ -90,3 +90,30 @@ CREATE TABLE mantenimiento (
     id_recurso INT NOT NULL,
     foreign key (id_recurso) references recurso_tecnologico(id_recurso)
     );
+    
+    
+    -- ============================================
+-- GESTEC - USUARIO ADMINISTRADOR INICIAL
+-- ============================================
+
+-- Credenciales temporales para demostración:
+-- Usuario: admin
+-- Contraseña: admin
+
+START TRANSACTION;
+
+INSERT INTO persona
+(documento, nombre, apellido, telefono)
+VALUES
+('GESTEC-ADMIN', 'Administrador', 'GESTEC', NULL);
+
+INSERT INTO usuario
+(id_persona, nombre_usuario, password_hash)
+SELECT
+    id_persona,
+    'admin',
+    'PBKDF2-SHA256$600000$UyudAa0Z5ShAX7KQYK7/Gg==$ILq3LhrjHsUhX5BUa5G7ZcL7+pVJ0InxneepMQVURKk='
+FROM persona
+WHERE documento = 'GESTEC-ADMIN';
+
+COMMIT;

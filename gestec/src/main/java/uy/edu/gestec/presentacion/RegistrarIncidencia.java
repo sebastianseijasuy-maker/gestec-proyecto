@@ -128,7 +128,7 @@ private final List<RecursoTecnologico> recursosEncontrados
         jLabel2.setText("Descripción de la incidencia");
 
         cmbTipoIncidencia.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-        cmbTipoIncidencia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Software", "Hardware", "Conectividad", "Otro" }));
+        cmbTipoIncidencia.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Daño", "Perdida", "Falla" }));
 
         jLabel3.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(15, 55, 96));
