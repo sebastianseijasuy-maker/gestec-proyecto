@@ -1,3 +1,4 @@
+
 package uy.edu.gestec.persistencia;
 
 import java.sql.Connection;
@@ -10,9 +11,17 @@ public class ConexionBD {
             "jdbc:mysql://127.0.0.1:3306/gestec";
 
     private static final String USUARIO = "root";
-    private static final String PASSWORD = "Nucita2026";
+    private static final String CONTRASENA = "1234";
 
     public static Connection conectar() throws SQLException {
-        return DriverManager.getConnection(URL, USUARIO, PASSWORD);
+        return DriverManager.getConnection(
+                URL,
+                USUARIO,
+                CONTRASENA
+        );
+    }
+
+    public static Connection obtenerConexion() throws SQLException {
+        return conectar();
     }
 }
